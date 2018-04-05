@@ -1,0 +1,77 @@
+/* ----- ----- ESTILOS DE RESULTADOS DE BUSQUEDA ----- ----- */
+.contenedor-resultados {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 300px;
+  grid-gap: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+}
+
+.contenedor-resultados .card {
+  background-color: #FFF;
+  border-radius: .25rem;
+  border: 2px solid #DFE0E0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.contenedor-resultados .card .card-img {
+  text-align: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #000;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.contenedor-resultados .card .card-img img {
+  width: 70px;
+}
+
+.contenedor-resultados .card .card-info {
+  padding: 10px 0;
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+  border-bottom: 1px solid #000;
+  grid-gap: 5px;
+}
+
+.contenedor-resultados .card .card-info label {
+  font-weight: 700;
+}
+
+.contenedor-resultados .card .card-info p {
+  font-style: italic;
+}
+
+.contenedor-resultados .card .card-opc {
+  padding: 10px;
+  text-align: center;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.contenedor-resultados .card .card-opc button {
+  margin: 5px;
+  padding: 2px 5px;
+}
+
+.contenedor-btns {
+  padding: 15px;
+}
+
+/* ----- ----- RESPONSIVE ----- ----- */
+@media screen and (max-width: 900px) {
+  .contenedor-resultados {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .contenedor-resultados {
+    grid-template-columns: 1fr;
+  }
+}

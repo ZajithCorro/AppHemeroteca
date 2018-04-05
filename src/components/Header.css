@@ -1,0 +1,43 @@
+.menu-header {
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid #DFE0E0;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.menu-items {
+  display: flex;
+}
+
+.menu-item {
+  margin-left: 2rem;
+}
+
+.menu-link {
+  padding-bottom: 5px;
+}
+
+.menu-link:hover {
+  color: #55565A;
+  border-bottom: 1px solid #55565A;
+  opacity: .6;
+}
+
+.menu-icon {
+  display: none;
+}
+
+.active { 
+  border-bottom: 1px solid #000;
+}
