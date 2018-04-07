@@ -73,11 +73,7 @@ li {
 }
 
 /* ----- ----- ESTILOS DE ELEMENTOS EN FORMULARIOS ----- ----- */
-input[type="radio"] {
-  margin-right: 10px;
-}
-
-input[type="text"], input[type="date"], input[type="number"] {
+.input {
   color: #55565A;
   border-radius: .25rem;
   border: 1px solid #CED4DA;
@@ -85,6 +81,18 @@ input[type="text"], input[type="date"], input[type="number"] {
   line-height: 1.5;
   padding: .375rem .75rem;
   width: 100%;
+}
+
+.inputValido {
+  border: 1px solid rgb(120, 189, 120);
+}
+
+.inputInvalido {
+  border: 1px solid rgba(255, 0, 0, 0.7);
+}
+
+input[type="radio"] {
+  margin-right: 10px;
 }
 
 .btn {
@@ -101,6 +109,12 @@ input[type="text"], input[type="date"], input[type="number"] {
 
 .label::after {
   content: ":";
+}
+
+.error {
+  margin-top: 5px;
+  font-size: .8em;
+  color: rgba(255, 0, 0, 0.7);
 }
 
 /* ----- ----- ESTILOS DE RESPONSIVE ----- ----- */

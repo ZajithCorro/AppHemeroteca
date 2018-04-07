@@ -5,14 +5,25 @@ import 'firebase/firestore'
 class Alta extends Component {
   constructor(){
     super();
+
     this.state = ({
       numeroGaceta: '',
       folioGaceta: '',
       tomoGaceta: '',
       paginas: '',
       tipoGaceta: '',
-      fechaEjemplar: ''
-    })
+      fechaEjemplar: '',
+      formError: {
+        numero: '',
+        tomo: '',
+        paginas: '',
+        tipo: '',
+        fecha: ''
+      },
+      numeroErrores: 5,
+      validacionTotal : false
+    });
+
     this.handleInput = this.handleInput.bind(this);
     this.limpiarInputs = this.limpiarInputs.bind(this);
     this.nuevoRegistro = this.nuevoRegistro.bind(this);
@@ -34,25 +45,82 @@ class Alta extends Component {
       });
   }
 
+  componentWillUpdate() {
+    let a = 0;
+    for (let i in this.state.formError) {
+     if (this.state.formError[i] === false) {
+       a++;
+     }
+    }
+    (this.state.numeroErrores === 0) ? window.document.getElementById('btnRegistro').disabled = false : window.document.getElementById('btnRegistro').disabled = true;
+  }
+
   handleInput(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let name = event.target.name;
+    let value = event.target.value;
+
+    this.setState({ [name]: value }, () => { this.validarInput(name, value) });
+  }
+
+  validarInput(name, value) {
+    let errorForms = this.state.formError;
+    let state;
+
+    switch (name) {
+      case 'numeroGaceta':
+        state = (value.match(/^\d+$/)) ? false : true;
+        errorForms.numero = state;
+        break;
+
+      case 'tomoGaceta':
+        state = (value.match(/^\d+$/)) ? false : true;
+        errorForms.tomo = state;
+        break;
+
+      case 'paginas':
+        state = (value.match(/^\d+$/)) ? false : true;
+        errorForms.paginas = state;
+        break;
+
+      case 'fechaEjemplar':
+        state = (value) ? false : true;
+        errorForms.fecha = state;
+        break;
+
+      case 'tipoGaceta':
+        state = (value) ? false : true;
+        errorForms.tipo = state;
+        break;
+
+      default:
+        break;
+    }
+
+    this.setState({ formError : errorForms })
+  }
+
+  claseError(state) {
+    if (state === true) {
+      return 'inputInvalido'
+    } else if (state === false) {
+        return 'inputValido'
+    }
   }
 
   limpiarInputs(event) {
     event.preventDefault();
-    this.setState({
-      numeroGaceta: '',
-      tomoGaceta: '',
-      paginas: '',
-      tipoGaceta: '',
-      fechaEjemplar: ''
-    });
 
-    window.document.getElementById('Extraordinaria').checked = false;
-    window.document.getElementById('Ordinaria').checked = false;
-    window.document.getElementById('Alcance').checked = false;
+    // this.setState({
+    //   numeroGaceta: '',
+    //   tomoGaceta: '',
+    //   paginas: '',
+    //   tipoGaceta: '',
+    //   fechaEjemplar: ''
+    // });
+
+    // window.document.getElementById('Extraordinaria').checked = false;
+    // window.document.getElementById('Ordinaria').checked = false;
+    // window.document.getElementById('Alcance').checked = false;
   }
 
   nuevoRegistro(event) {
@@ -68,43 +136,45 @@ class Alta extends Component {
       existencia : parseInt(this.state.numeroGaceta) * 10
     }
 
-    console.log(data)
+    // firebase.firestore()
+    //   .collection('gacetas')
+    //   .add(data)
+    //   .then(docRef => {
+    //     console.log(docRef.id)
+    //   })
+    //   .catch(err => {
+    //     console.log('Error: ', err)
+    //   });
 
-    firebase.firestore()
-      .collection('gacetas')
-      .add(data)
-      .then(docRef => {
-        console.log(docRef.id)
-      })
-      .catch(err => {
-        console.log('Error: ', err)
-      });
-
-    this.limpiarInputs(event)
+    // this.limpiarInputs(event)
+    console.log(data);
   }
 
   render() {
     return(
       <div className="main">
-        <form action="" id="form">
+        <form action="" id="form" onSubmit={this.limpiarInputs}>
           <div className="contenedor">
             <h1 className="contenedor-titulo">Datos de gaceta</h1>
             <div className="form">
               <div className="contenedor">
-                <label htmlFor="Número de gaceta" className="label">Número de gaceta</label>
-                <input type="number" name="numeroGaceta" id="Número de gaceta" placeholder="Número de gaceta" value={this.state.numeroGaceta} min="0" onChange={this.handleInput}/>
+                <label className="label">Número de gaceta</label>
+                <input type="text" name="numeroGaceta" value={this.state.numeroGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.numero)} input`}/>
+                { this.state.formError.numero ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Folio</label>
-                <input type="number" name="folioGaceta" min="0" disabled value={this.state.folioGaceta} onChange={this.handleInput}/>
+                <input type="text" name="folioGaceta" min="0" disabled value={this.state.folioGaceta} onChange={this.handleInput} className="input"/>
               </div>
               <div className="contenedor">
-                <label className="label" htmlFor="Número de tomo de gaceta">Número de tomo</label>
-                <input type="text" name="tomoGaceta" id="Número de tomo de gaceta" placeholder="Número de tomo de gaceta" value={this.state.tomoGaceta} onChange={this.handleInput}/>
+                <label className="label">Número de tomo</label>
+                <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.tomo)} input`}/>
+                { this.state.formError.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
               </div>
               <div className="contenedor">
-                <label className="label" htmlFor="Número páginas">Páginas</label>
-                <input type="number" name="paginas" id="Número páginas" placeholder="Número páginas" value={this.state.paginas} onChange={this.handleInput}/>
+                <label className="label">Páginas</label>
+                <input type="text" name="paginas" value={this.state.paginas} onChange={this.handleInput} className={`${this.claseError(this.state.formError.paginas)} input`}/>
+                { this.state.formError.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Tipo</label>
@@ -124,12 +194,12 @@ class Alta extends Component {
                 </div>
               </div>
               <div className="contenedor">
-                <label className="label" htmlFor="Fecha de gaceta">Fecha de ejemplar</label>
-                <input type="date" name="fechaEjemplar" id="Fecha de gaceta" placeholder="Fecha de gaceta" value={this.state.fechaEjemplar} onChange={this.handleInput}/>
+                <label className="label">Fecha de ejemplar</label>
+                <input type="date" name="fechaEjemplar" value={this.state.fechaEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.formError.fecha)} input`}/>
               </div>
               <div className="contenedor-btns entrega">
-                <button className="btn" onClick={this.limpiarInputs}>Limpiar</button>
-                <button className="btn" onClick={this.nuevoRegistro}>Registro</button>
+                <button className="btn">Limpiar</button>
+                <button className="btn" onClick={this.nuevoRegistro} disabled id="btnRegistro">Registro</button>
               </div>
             </div>
           </div>
@@ -137,20 +207,20 @@ class Alta extends Component {
             <h1 className="contenedor-titulo">Recepción</h1>
             <div className="form">
               <div className="contenedor">
-                <label className="label" htmlFor="Fecha de recepción">Fecha de recepción</label>
-                <input type="date" name="fechaRecepcion" id="Fecha de recepción" placeholder="Fecha de recepción"/>
+                <label className="label">Fecha de recepción</label>
+                <input type="date" name="fechaRecepcion" className="input"/>
               </div>
               <div className="contenedor">
-                <label className="label" htmlFor="Número de ejemplares de gaceta">Número de ejemplares</label>
-                <input type="number" name="ejemplares" id="Número de ejemplares de gaceta" placeholder="Número de ejemplares de gaceta"/>
+                <label className="label">Número de ejemplares</label>
+                <input type="text" name="ejemplares" className="input"/>
               </div>
               <div className="contenedor">
                 <label className="label" htmlFor="Nombre persona que entrega">Persona quién entrega</label>
-                <input type="text" name="nombrePersona" id="Nombre persona que entrega" placeholder="Nombre persona que entrega"/>
+                <input type="text" name="nombrePersona" className="input"/>
               </div>
               <div className="contenedor">
                 <label className="label" htmlFor="Número">Ejemplares en hemeroteca</label>
-                <input type="number" name="ejemplaresExistencia" id="Número" placeholder="Número"/>
+                <input type="text" name="ejemplaresExistencia" className="input"/>
               </div>
               <div className="contenedor entrega">
                 <label className="label">Entregado a</label>

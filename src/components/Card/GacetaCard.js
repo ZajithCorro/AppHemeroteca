@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import 'firebase/firestore'
 
 // Assets
-import libro from './img/libro.svg'
+import libro from '../img/libro.svg'
 import './Card.css'
 
 class Gaceta extends Component {

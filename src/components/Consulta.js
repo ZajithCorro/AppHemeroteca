@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 // Components
-import Gaceta from './GacetaCard'
+import Gaceta from './Card/GacetaCard'
 
 class Consulta extends Component {
   constructor(){
