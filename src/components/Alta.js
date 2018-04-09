@@ -20,8 +20,7 @@ class Alta extends Component {
         tipo: '',
         fecha: ''
       },
-      numeroErrores: 5,
-      validacionTotal : false
+      validacionTotal : true
     });
 
     this.handleInput = this.handleInput.bind(this);
@@ -29,7 +28,7 @@ class Alta extends Component {
     this.nuevoRegistro = this.nuevoRegistro.bind(this);
   }
   
-  componentDidMount() {
+  componentWillMount() {
     firebase.firestore()
       .collection('gacetas')
       .orderBy('id', 'desc')
@@ -37,7 +36,7 @@ class Alta extends Component {
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
-          this.setState({ folioGaceta: doc.data().id + 1 })
+          (doc.length !== 0) ? this.setState({ folioGaceta: doc.data().id + 1 }) : this.setState({ folioGaceta: 1 });
         })
       })
       .catch(err => {
@@ -45,14 +44,14 @@ class Alta extends Component {
       });
   }
 
-  componentWillUpdate() {
+  activarBoton() {
     let a = 0;
     for (let i in this.state.formError) {
      if (this.state.formError[i] === false) {
        a++;
      }
     }
-    (this.state.numeroErrores === 0) ? window.document.getElementById('btnRegistro').disabled = false : window.document.getElementById('btnRegistro').disabled = true;
+    (a === 5) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
   }
 
   handleInput(event) {
@@ -64,32 +63,26 @@ class Alta extends Component {
 
   validarInput(name, value) {
     let errorForms = this.state.formError;
-    let state;
 
     switch (name) {
       case 'numeroGaceta':
-        state = (value.match(/^\d+$/)) ? false : true;
-        errorForms.numero = state;
+        errorForms.numero = (value.match(/^\d+$/)) ? false : true;
         break;
 
       case 'tomoGaceta':
-        state = (value.match(/^\d+$/)) ? false : true;
-        errorForms.tomo = state;
+        errorForms.tomo = (value.match(/^\d+$/)) ? false : true;
         break;
 
       case 'paginas':
-        state = (value.match(/^\d+$/)) ? false : true;
-        errorForms.paginas = state;
+        errorForms.paginas = (value.match(/^\d+$/)) ? false : true;
         break;
 
       case 'fechaEjemplar':
-        state = (value) ? false : true;
-        errorForms.fecha = state;
+        errorForms.fecha = (value) ? false : true;
         break;
 
       case 'tipoGaceta':
-        state = (value) ? false : true;
-        errorForms.tipo = state;
+        errorForms.tipo = (value) ? false : true;
         break;
 
       default:
@@ -97,6 +90,7 @@ class Alta extends Component {
     }
 
     this.setState({ formError : errorForms })
+    this.activarBoton();
   }
 
   claseError(state) {
@@ -110,17 +104,36 @@ class Alta extends Component {
   limpiarInputs(event) {
     event.preventDefault();
 
-    // this.setState({
-    //   numeroGaceta: '',
-    //   tomoGaceta: '',
-    //   paginas: '',
-    //   tipoGaceta: '',
-    //   fechaEjemplar: ''
-    // });
+    this.setState({
+      numeroGaceta: '',
+      paginas: '',
+      tomoGaceta: '',
+      tipoGaceta: '',
+      fechaEjemplar: '',
+      formError: {
+        numero: '',
+        tomo: '',
+        paginas: '',
+        tipo: '',
+        fecha: ''
+      },
+      validacionTotal : true
+    });
 
-    // window.document.getElementById('Extraordinaria').checked = false;
-    // window.document.getElementById('Ordinaria').checked = false;
-    // window.document.getElementById('Alcance').checked = false;
+    window.document.getElementById('Extraordinaria').checked = false;
+    window.document.getElementById('Ordinaria').checked = false;
+    window.document.getElementById('Alcance').checked = false;
+  }
+
+  fecha(date) {
+    let aux = new Date(date);
+    let fecha = new Date()
+
+    fecha.setDate(aux.getDate() + 1)
+    fecha.setMonth(aux.getMonth())
+    fecha.setFullYear(aux.getFullYear())
+
+    return fecha;
   }
 
   nuevoRegistro(event) {
@@ -128,7 +141,7 @@ class Alta extends Component {
 
     let data = {
       id : this.state.folioGaceta,
-      fecha : new Date(this.state.fechaEjemplar),
+      fecha : this.fecha(this.state.fechaEjemplar),
       numero_gaceta : parseInt(this.state.numeroGaceta),
       paginas : parseInt(this.state.paginas),
       tipo : this.state.tipoGaceta,
@@ -136,31 +149,29 @@ class Alta extends Component {
       existencia : parseInt(this.state.numeroGaceta) * 10
     }
 
-    // firebase.firestore()
-    //   .collection('gacetas')
-    //   .add(data)
-    //   .then(docRef => {
-    //     console.log(docRef.id)
-    //   })
-    //   .catch(err => {
-    //     console.log('Error: ', err)
-    //   });
-
-    // this.limpiarInputs(event)
-    console.log(data);
+    firebase.firestore()
+      .collection('gacetas')
+      .add(data)
+      .then(docRef => {
+        this.setState({ folioGaceta: this.state.folioGaceta + 1 })
+      })
+      .catch(err => {
+        console.log('Error: ', err)
+      });
+    this.limpiarInputs(event)
   }
 
   render() {
     return(
       <div className="main">
-        <form action="" id="form" onSubmit={this.limpiarInputs}>
+        <form action="" id="form" onSubmit={this.limpiarInputs} autoComplete="off">
           <div className="contenedor">
             <h1 className="contenedor-titulo">Datos de gaceta</h1>
             <div className="form">
               <div className="contenedor">
                 <label className="label">Número de gaceta</label>
                 <input type="text" name="numeroGaceta" value={this.state.numeroGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.numero)} input`}/>
-                { this.state.formError.numero ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
+                { this.state.formError.numero ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Folio</label>
@@ -169,12 +180,12 @@ class Alta extends Component {
               <div className="contenedor">
                 <label className="label">Número de tomo</label>
                 <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.tomo)} input`}/>
-                { this.state.formError.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
+                { this.state.formError.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Páginas</label>
                 <input type="text" name="paginas" value={this.state.paginas} onChange={this.handleInput} className={`${this.claseError(this.state.formError.paginas)} input`}/>
-                { this.state.formError.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras.</div> : '' }
+                { this.state.formError.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Tipo</label>
@@ -199,7 +210,7 @@ class Alta extends Component {
               </div>
               <div className="contenedor-btns entrega">
                 <button className="btn">Limpiar</button>
-                <button className="btn" onClick={this.nuevoRegistro} disabled id="btnRegistro">Registro</button>
+                <button className="btn" onClick={this.nuevoRegistro} id="btnRegistro" disabled={this.state.validacionTotal}>Registro</button>
               </div>
             </div>
           </div>

@@ -7,30 +7,16 @@ import libro from '../img/libro.svg'
 import './Card.css'
 
 class Gaceta extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       gacetas: []
     }
   }
 
-  componentWillMount(){
-    firebase.firestore()
-      .collection('gacetas')
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          this.setState({ gacetas: [...this.state.gacetas, doc.data()] })
-        });
-      })
-      .catch(err => {
-        console.error(err);
-      })
-  }
-
   render() {
-    const gacetas = this.state.gacetas.map((gaceta, i) => {
-      return(
+    const gacetas = this.props.valor.map((gaceta,i) => {
+      return (
         <div className="card" key={i}>
           <div className="card-img">
             <img src={libro}/>
@@ -46,11 +32,11 @@ class Gaceta extends Component {
             </div>
             <div className="contenedor">
               <label className="label">Fecha</label>
-              <p>{
-                // (gaceta.fecha.getDay() + 1 )+ ' / ' +
-                // (gaceta.fecha.getMonth() + 1) + ' / '
-                gaceta.fecha.getFullYear() 
-              }</p>
+              <p>
+                {
+                  gaceta.fecha.getDate() + ' / ' + (gaceta.fecha.getMonth() + 1) +  ' / ' +  gaceta.fecha.getFullYear()
+                }
+              </p>
             </div>
             <div className="contenedor">
               <label className="label">Páginas</label>
@@ -64,18 +50,18 @@ class Gaceta extends Component {
               <label className="label">Existencia</label>
               <p>{gaceta.existencia}</p>
             </div>
+          </div>
+          <div className="card-opc">
+            <button className="btn">Dígital</button>
+            <button className="btn">Modificar</button>
+          </div>
         </div>
-        <div className="card-opc">
-          <button className="btn">Dígital</button>
-          <button className="btn">Modificar</button>
-        </div>
-      </div>
-      );
+      )
     });
 
     return(
       <div className="contenedor-resultados">
-        {gacetas}
+        { gacetas }
       </div>
     );
   }

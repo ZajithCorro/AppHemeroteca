@@ -37,10 +37,6 @@ li {
   grid-template-rows: auto;
   grid-gap: 1.5rem;
 }
-
-.main {
-  margin-bottom: 20px;
-}
   
 .contenedor {
   display: flex;
@@ -105,6 +101,10 @@ input[type="radio"] {
 
 .btn:hover {
   cursor: pointer;
+}
+
+.btn:disabled {
+  background: red;
 }
 
 .label::after {
