@@ -13,6 +13,7 @@ import Consulta from './components/Consulta.js'
 import Modificacion from './components/Modificacion.js'
 import Salir from './components/Salir.js'
 import Home from './components/Home.js'
+import ModificarGaceta from './components/ModificarGaceta.js'
 
 firebase.initializeApp(config);
 
@@ -26,8 +27,9 @@ class App extends Component {
         <Route exact path="/" component={Home}/>
         <Route path="/alta" component={Alta}/>
         <Route path="/consulta" component={Consulta}/>
-        <Route path="/modificacion" component={Modificacion}/>
+        <Route exact path="/modificacion" component={Modificacion}/>
         <Route path="/salir" component={Salir}/>
+        <Route exact path="/modificacion/:id" component={ModificarGaceta}/>
       </div>
     </Router>
    ) 

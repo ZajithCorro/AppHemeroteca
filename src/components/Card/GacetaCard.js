@@ -1,5 +1,7 @@
+// Dependencies
 import React, { Component } from 'react';
 import firebase from 'firebase';
+import { NavLink } from 'react-router-dom';
 import 'firebase/firestore'
 
 // Assets
@@ -10,6 +12,7 @@ class Gaceta extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      prueba: 1,
       gacetas: []
     }
   }
@@ -33,9 +36,7 @@ class Gaceta extends Component {
             <div className="contenedor">
               <label className="label">Fecha</label>
               <p>
-                {
-                  gaceta.fecha.getDate() + ' / ' + (gaceta.fecha.getMonth() + 1) +  ' / ' +  gaceta.fecha.getFullYear()
-                }
+                { gaceta.fecha.getDate() + ' / ' + (gaceta.fecha.getMonth() + 1) +  ' / ' +  gaceta.fecha.getFullYear() }
               </p>
             </div>
             <div className="contenedor">
@@ -52,7 +53,7 @@ class Gaceta extends Component {
             </div>
           </div>
           <div className="card-opc">
-            <button className="btn">Dígital</button>
+            <NavLink to={`/modificacion/${gaceta.numero_gaceta}`} className="btn">Modificar </NavLink>
             <button className="btn">Modificar</button>
           </div>
         </div>

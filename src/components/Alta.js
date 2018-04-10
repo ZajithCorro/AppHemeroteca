@@ -1,3 +1,4 @@
+// Dependencies
 import React, { Component } from 'react';
 import firebase from 'firebase'
 import 'firebase/firestore'
@@ -20,15 +21,18 @@ class Alta extends Component {
         tipo: '',
         fecha: ''
       },
-      validacionTotal : true
+      validacionTotal : true,
+      ultimoRegistro: []
     });
 
     this.handleInput = this.handleInput.bind(this);
     this.limpiarInputs = this.limpiarInputs.bind(this);
     this.nuevoRegistro = this.nuevoRegistro.bind(this);
+    this.mensajeRegistro = this.mensajeRegistro.bind(this)
+    window.document.title = 'Hemeroteca | Alta'
   }
   
-  componentWillMount() {
+  componentWillMount () {
     firebase.firestore()
       .collection('gacetas')
       .orderBy('id', 'desc')
@@ -44,7 +48,7 @@ class Alta extends Component {
       });
   }
 
-  activarBoton() {
+  activarBoton () {
     let a = 0;
     for (let i in this.state.formError) {
      if (this.state.formError[i] === false) {
@@ -54,14 +58,14 @@ class Alta extends Component {
     (a === 5) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
   }
 
-  handleInput(event) {
+  handleInput (event) {
     let name = event.target.name;
     let value = event.target.value;
 
     this.setState({ [name]: value }, () => { this.validarInput(name, value) });
   }
 
-  validarInput(name, value) {
+  validarInput (name, value) {
     let errorForms = this.state.formError;
 
     switch (name) {
@@ -93,7 +97,7 @@ class Alta extends Component {
     this.activarBoton();
   }
 
-  claseError(state) {
+  claseError (state) {
     if (state === true) {
       return 'inputInvalido'
     } else if (state === false) {
@@ -101,9 +105,7 @@ class Alta extends Component {
     }
   }
 
-  limpiarInputs(event) {
-    event.preventDefault();
-
+  limpiarInputs (event) {
     this.setState({
       numeroGaceta: '',
       paginas: '',
@@ -136,7 +138,7 @@ class Alta extends Component {
     return fecha;
   }
 
-  nuevoRegistro(event) {
+  nuevoRegistro (event) {
     event.preventDefault();
 
     let data = {
@@ -153,18 +155,30 @@ class Alta extends Component {
       .collection('gacetas')
       .add(data)
       .then(docRef => {
-        this.setState({ folioGaceta: this.state.folioGaceta + 1 })
+        this.setState({ 
+          folioGaceta: this.state.folioGaceta + 1,
+          ultimoRegistro: data
+        })
+        this.limpiarInputs(event)
       })
       .catch(err => {
         console.log('Error: ', err)
       });
-    this.limpiarInputs(event)
+  }
+
+  mensajeRegistro () {
+    if (this.state.ultimoRegistro.length !== 0) {
+      console.log('Aqui')
+      return(
+        window.setTimeout(() => { <p>Hola</p> }, 3000)
+      );
+    }
   }
 
   render() {
     return(
       <div className="main">
-        <form action="" id="form" onSubmit={this.limpiarInputs} autoComplete="off">
+        <form action="" id="form" autoComplete="off">
           <div className="contenedor">
             <h1 className="contenedor-titulo">Datos de gaceta</h1>
             <div className="form">
@@ -173,19 +187,11 @@ class Alta extends Component {
                 <input type="text" name="numeroGaceta" value={this.state.numeroGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.numero)} input`}/>
                 { this.state.formError.numero ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
               </div>
-              <div className="contenedor">
-                <label className="label">Folio</label>
-                <input type="text" name="folioGaceta" min="0" disabled value={this.state.folioGaceta} onChange={this.handleInput} className="input"/>
-              </div>
+
               <div className="contenedor">
                 <label className="label">Número de tomo</label>
                 <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.formError.tomo)} input`}/>
                 { this.state.formError.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
-              </div>
-              <div className="contenedor">
-                <label className="label">Páginas</label>
-                <input type="text" name="paginas" value={this.state.paginas} onChange={this.handleInput} className={`${this.claseError(this.state.formError.paginas)} input`}/>
-                { this.state.formError.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
               </div>
               <div className="contenedor">
                 <label className="label">Tipo</label>
@@ -205,12 +211,18 @@ class Alta extends Component {
                 </div>
               </div>
               <div className="contenedor">
+                <label className="label">Páginas</label>
+                <input type="text" name="paginas" value={this.state.paginas} onChange={this.handleInput} className={`${this.claseError(this.state.formError.paginas)} input`}/>
+                { this.state.formError.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
+              </div>
+              <div className="contenedor">
                 <label className="label">Fecha de ejemplar</label>
                 <input type="date" name="fechaEjemplar" value={this.state.fechaEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.formError.fecha)} input`}/>
+                { this.state.formError.fecha ? <div className="error">El campo debe de estar lleno.</div> : '' }
               </div>
-              <div className="contenedor-btns entrega">
-                <button className="btn">Limpiar</button>
-                <button className="btn" onClick={this.nuevoRegistro} id="btnRegistro" disabled={this.state.validacionTotal}>Registro</button>
+              <div className="contenedor">
+                <label className="label">Archivo digital</label>
+                <input type="text" className="input"/>
               </div>
             </div>
           </div>
@@ -260,6 +272,11 @@ class Alta extends Component {
               </div>
             </div>
           </div>
+          <div className="contenedor-btns">
+            <button className="btn">Limpiar campos</button>
+            <button className="btn" onClick={this.nuevoRegistro} id="btnRegistro" disabled={this.state.validacionTotal}>Guardar registro</button>
+          </div>
+          {this.mensajeRegistro()}
         </form>
       </div>
     );

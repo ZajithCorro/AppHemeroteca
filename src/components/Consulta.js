@@ -1,3 +1,4 @@
+// Dependencies
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import 'firebase/firestore';
@@ -14,18 +15,27 @@ class Consulta extends Component {
       fecha_ejemplar2: '',
       fecha_recepcion1: '',
       fecha_recepcion2: '',
-      files: []
+      files: [],
+      errores: {
+        gaceta: '',
+        fechaEjem: '',
+        fechaEjem2: '',
+        fechaRec: '',
+        fechaRec2: ''
+      },
+      validacionForm : true,
     };
     this.handleInput = this.handleInput.bind(this)
     this.buscar = this.buscar.bind(this)
+    window.document.title = 'Hemeroteca | Consulta'
   }
 
-  buscar(e) {
+  buscar() {
     let docs = [];
 
     firebase.firestore()
       .collection('gacetas')
-      .where('numero_gaceta', '==' , parseInt(this.state.gaceta))
+      .where('fecha', '==' , parseInt(this.state.fecha_ejemplar1))
       .limit(2)
       .get()
       .then(snapshot => {
@@ -39,8 +49,59 @@ class Consulta extends Component {
       });
   }
 
+  validarInput(name, val) {
+    let error = this.state.errores;
+
+    switch(name) {
+      case 'gaceta':
+        error.gaceta = (val.match(/^\d+$/)) ? false : true;
+        break;
+      
+      case 'fecha_ejemplar1':
+        error.fechaEjem = (val.length) ? false : true;
+        break;
+
+      case 'fecha_ejemplar2':
+        error.fechaEjem2 = (val.length) ? false : true;
+        break;
+
+      case 'fecha_recepcion1':
+        error.fechaRec = (val.length) ? false : true;
+        break;
+
+      case 'fecha_recepcion2':
+        error.fechaRec2 = (val.length) ? false : true;
+        break;
+
+      default:
+        break;
+    }
+
+    this.setState({ errores: error });
+    this.activarBtn(name);
+  }
+
+  claseError(state) {
+    if (state === true) {
+      return 'inputInvalido'
+    } else if (state === false) {
+        return 'inputValido'
+    }
+  }
+
+  activarBtn(name) {
+    let a = 0;
+    for (let i in this.state.errores) {
+     if (this.state.errores[i] === false) a++;
+    }
+
+    (a >= 1) ? this.setState({ validacionForm : false }) : this.setState({ validacionForm : true })
+  }
+
   handleInput(e) {
-    this.setState({ [e.target.name]: e.target.value });
+    let name = e.target.name;
+    let value = e.target.value;
+    this.setState({ [name]: value }, () => { this.validarInput(name, value) });
   }
 
   render() {
@@ -51,26 +112,29 @@ class Consulta extends Component {
           <div className="form">
             <div className="contenedor">
               <label className="label">Número de gaceta</label>
-              <input type="text" name="gaceta" onChange={this.handleInput} className="input"/>
+              <input type="text" name="gaceta" onChange={this.handleInput} className={`${this.claseError(this.state.errores.gaceta)} input`}/>
+              { this.state.errores.gaceta ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
             </div>
             <div className="contenedor">
               <label className="label">Fecha del ejemplar</label>
               <div className="contenedor-2-input">
-                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} className="input"/>
-                <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} className="input"/>
+                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaEjem)} input`}/>
+                <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/>
               </div>
+              { (this.state.errores.fechaEjem2 && this.state.errores.fechaEjem) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
             </div>
             <div className="contenedor">
               <label className="label">Fecha de recepción</label>
               <div className="contenedor-2-input">
-                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} className="input"/>
-                <input type="date" name="fecha_recepcion2" onChange={this.handleInput} className="input"/>
+                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaRec)} input`}/>
+                <input type="date" name="fecha_recepcion2" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaRec2)} input`}/>
               </div>
+              { (this.state.errores.fechaRec2 && this.state.errores.fechaRec) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
             </div>
-            <div className="contenedor-btns">
-              <button className="btn">Limpiar</button>
-              <button className="btn" onClick={this.buscar}>Consultar</button>
-            </div>
+          </div>
+          <div className="contenedor-btns">
+            <button className="btn">Limpiar</button>
+            <button className="btn" onClick={this.buscar} disabled={this.state.validacionForm}>Consultar</button>
           </div>
         </div>
         <div className="contenedor">
