@@ -50,7 +50,7 @@ class Alta extends Component {
     }
 
     // Función que activa el botón "Guardar Registro" en caso de que el formulario este llenado correctamente.
-    activarBoton () {
+    activarBoton () {
         let a = 0;
         for (let i in this.state.formError) {
             if (this.state.formError[i] === false) a++;
@@ -67,39 +67,39 @@ class Alta extends Component {
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
     validarInput (name, value) {
-        let errorForms = this.state.formError;
+        const { formError }  = this.state;
 
         switch (name) {
         case 'numeroGaceta':
-            errorForms.numero = (value.match(/^\d+$/)) ? false : true;
+            formError.numero = (value.match(/^\d+$/)) ? false : true;
             break;
 
         case 'tomoGaceta':
-            errorForms.tomo = (value.match(/^\d+$/)) ? false : true;
+            formError.tomo = (value.match(/^\d+$/)) ? false : true;
             break;
 
-        case 'paginas':
-            errorForms.paginas = (value.match(/^\d+$/)) ? false : true;
+        case 'paginas':formError
+            formError.paginas = (value.match(/^\d+$/)) ? false : true;
             break;
 
         case 'fechaEjemplar':
-            errorForms.fecha = (value) ? false : true;
+            formError.fecha = (value) ? false : true;
             break;
 
         case 'tipoGaceta':
-            errorForms.tipo = (value) ? false : true;
+            formError.tipo = (value) ? false : true;
             break;
 
         default:
             break;
         }
 
-        this.setState({ formError : errorForms })
+        this.setState({ formError : formError })
         this.activarBoton();
     }
 
     // Función que recibe el "State" de cada input y asigna una clase error a los input que tengan un contenido incorrecto o estén vacios.
-    claseError (state) {
+    claseError (state) {
         if (state === true) {
             return 'inputInvalido'
         } else if (state === false) {
@@ -131,7 +131,7 @@ class Alta extends Component {
     }
 
     // Función que convierte la fecha ingresada en el formulario en un formato correcto para la BD.
-    fecha(date) {
+    fecha (date) {
         let aux = new Date(date);
         let fecha = new Date()
 

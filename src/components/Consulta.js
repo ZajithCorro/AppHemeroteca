@@ -31,7 +31,7 @@ class Consulta extends Component {
     }
 
     // Función que se activa al momento de hacer clic en el boton "Consultar". Seleccióna el campo con mayor prioridad y realiza un búsqueda.
-    buscar() {
+    buscar () {
         let docs = [];
 
         firebase.firestore()
@@ -41,7 +41,7 @@ class Consulta extends Component {
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-                docs.push(doc.data())
+                    docs.push(doc.data())
                 })
                 this.setState({files : docs})
             })
@@ -51,49 +51,49 @@ class Consulta extends Component {
     }
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
-    validarInput(name, val) {
-        let error = this.state.errores;
+    validarInput (name, val) {
+        const { errores } = this.state;
 
         switch(name) {
             case 'gaceta':
-                error.gaceta = (val.match(/^\d+$/)) ? false : true;
+                errores.gaceta = (val.match(/^\d+$/)) ? false : true;
                 break;
             
             case 'fecha_ejemplar1':
-                error.fechaEjem = (val.length) ? false : true;
+                errores.fechaEjem = (val.length) ? false : true;
                 break;
 
             case 'fecha_ejemplar2':
-                error.fechaEjem2 = (val.length) ? false : true;
+                errores.fechaEjem2 = (val.length) ? false : true;
                 break;
 
             case 'fecha_recepcion1':
-                error.fechaRec = (val.length) ? false : true;
+                errores.fechaRec = (val.length) ? false : true;
                 break;
 
             case 'fecha_recepcion2':
-                error.fechaRec2 = (val.length) ? false : true;
+                errores.fechaRec2 = (val.length) ? false : true;
                 break;
 
             default:
                 break;
         }
 
-        this.setState({ errores: error });
-        this.activarBtn(name);
+        this.setState({ errores: errores });
+        this.activarBtn();
     }
 
     // Función que recibe el "State" de cada input y asigna una clase error a los input que tengan un contenido incorrecto o estén vacios.
-    claseError(state) {
+    claseError (state) {
         if (state === true) {
-        return 'inputInvalido'
+            return 'inputInvalido'
         } else if (state === false) {
             return 'inputValido'
         }
     }
 
     // Función que activa el botón "Consultar" en caso de que el formulario este llenado correctamente.
-    activarBtn() {
+    activarBtn () {
         let a = 0;
         for (let i in this.state.errores) {
             if (this.state.errores[i] === false) a++;
@@ -103,7 +103,7 @@ class Consulta extends Component {
     }
 
     // Función que escucha los cambios en los inputs y los asigna al state correcto.
-    handleInput(e) {
+    handleInput (e) {
         let name = e.target.name;
         let value = e.target.value;
         this.setState({ [name]: value }, () => { this.validarInput(name, value) });
