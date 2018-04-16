@@ -1,7 +1,6 @@
 // Dependencies
 import React, { Component } from 'react';
-import firebase from 'firebase'
-import 'firebase/firestore'
+import firebase from '../firebase.js';
 
 class Alta extends Component {
     constructor(){

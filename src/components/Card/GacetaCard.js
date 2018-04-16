@@ -1,8 +1,7 @@
 // Dependencies
 import React, { Component } from 'react';
-import firebase from 'firebase';
 import { NavLink } from 'react-router-dom';
-import 'firebase/firestore'
+import firebase from '../../firebase.js';
 
 // Assets
 import libro from '../img/libro.svg'
@@ -12,8 +11,8 @@ class Gaceta extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        prueba: 1,
-        gacetas: []
+            prueba: 1,
+            gacetas: []
         }
     }
 
@@ -53,7 +52,7 @@ class Gaceta extends Component {
                         </div>
                     </div>
                     <div className="card-opc">
-                        <NavLink to={`/modificacion/${gaceta.numero_gaceta}`} className="btn">Modificar </NavLink>
+                        <NavLink to={`/modificacion/${gaceta.numero_gaceta}`} className="btn">Modificar</NavLink>
                         <button className="btn">Modificar</button>
                     </div>
                 </div>

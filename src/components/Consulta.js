@@ -1,7 +1,6 @@
 // Dependencies
 import React, { Component } from 'react';
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from '../firebase.js';
 
 // Components
 import Gaceta from './Card/GacetaCard'
@@ -17,16 +16,17 @@ class Consulta extends Component {
             fecha_recepcion2: '',
             files: [],
             errores: {
-            gaceta: '',
-            fechaEjem: '',
-            fechaEjem2: '',
-            fechaRec: '',
-            fechaRec2: ''
+                gaceta: '',
+                fechaEjem: '',
+                fechaEjem2: '',
+                fechaRec: '',
+                fechaRec2: ''
             },
             validacionForm : true,
         };
         this.handleInput = this.handleInput.bind(this)
         this.buscar = this.buscar.bind(this)
+        this.limpiar = this.limpiar.bind(this)
         window.document.title = 'Hemeroteca | Consulta'
     }
 
@@ -36,7 +36,7 @@ class Consulta extends Component {
 
         firebase.firestore()
             .collection('gacetas')
-            .where('fecha', '==' , parseInt(this.state.fecha_ejemplar1))
+            .where('numero_gaceta', '==' , parseInt(this.state.gaceta))
             .limit(2)
             .get()
             .then(snapshot => {
@@ -83,6 +83,26 @@ class Consulta extends Component {
         this.activarBtn();
     }
 
+    // Función que se activa al presionar el botón "Limpiar"
+    limpiar () {
+        this.setState({
+            gaceta: '',
+            fecha_ejemplar1: '',
+            fecha_ejemplar2: '',
+            fecha_recepcion1: '',
+            fecha_recepcion2: '',
+            files: [],
+            errores: {
+                gaceta: '',
+                fechaEjem: '',
+                fechaEjem2: '',
+                fechaRec: '',
+                fechaRec2: ''
+            },
+            validacionForm : true,
+        })
+    }
+    
     // Función que recibe el "State" de cada input y asigna una clase error a los input que tengan un contenido incorrecto o estén vacios.
     claseError (state) {
         if (state === true) {
@@ -117,34 +137,34 @@ class Consulta extends Component {
                     <div className="form">
                         <div className="contenedor">
                             <label className="label">Número de gaceta</label>
-                            <input type="text" name="gaceta" onChange={this.handleInput} className={`${this.claseError(this.state.errores.gaceta)} input`}/>
+                            <input type="text" name="gaceta" value={this.state.gaceta} onChange={this.handleInput} className={`${this.claseError(this.state.errores.gaceta)} input`}/>
                             { this.state.errores.gaceta ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha del ejemplar</label>
                             <div className="contenedor-2-input">
-                                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaEjem)} input`}/>
-                                <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/>
+                                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} value={this.state.fecha_ejemplar1} className={`${this.claseError(this.state.errores.fechaEjem)} input`}/>
+                                <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} value={this.state.fecha_ejemplar2} className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/>
                             </div>
                             { (this.state.errores.fechaEjem2 && this.state.errores.fechaEjem) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha de recepción</label>
                             <div className="contenedor-2-input">
-                                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaRec)} input`}/>
-                                <input type="date" name="fecha_recepcion2" onChange={this.handleInput} className="input" className={`${this.claseError(this.state.errores.fechaRec2)} input`}/>
+                                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} value={this.state.fecha_recepcion1} className={`${this.claseError(this.state.errores.fechaRec)} input`}/>
+                                <input type="date" name="fecha_recepcion2" onChange={this.handleInput} value={this.state.fecha_recepcion2} className={`${this.claseError(this.state.errores.fechaRec2)} input`}/>
                             </div>
                             { (this.state.errores.fechaRec2 && this.state.errores.fechaRec) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
                         </div>
                     </div>
                     <div className="contenedor-btns">
-                        <button className="btn">Limpiar</button>
+                        <button className="btn" onClick={this.limpiar}>Limpiar</button>
                         <button className="btn" onClick={this.buscar} disabled={this.state.validacionForm}>Consultar</button>
                     </div>
                 </div>
                 <div className="contenedor">
                     <h1 className="contenedor-titulo">Resultados de búsqueda</h1>
-                    { (this.state.files.length === 0) ? '' : <Gaceta  valor={this.state.files}/>}
+                    { (this.state.files.length) ? <Gaceta  valor={this.state.files}/> : ''}
                 </div>
             </div>
         );
