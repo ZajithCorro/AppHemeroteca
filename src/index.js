@@ -6,14 +6,14 @@ import './styles.css'
 import firebase, { auth } from './firebase.js'
 
 // Components
-import Header from './components/Header/Header.js'
-import Alta from './components/Alta.js'
-import Consulta from './components/Consulta.js'
-import Modificacion from './components/Modificacion.js'
-import Salir from './components/Salir.js'
-import Home from './components/Home.js'
-import ModificarGaceta from './components/ModificarGaceta.js'
-import Login from './Login';
+import Header from './components/Header/Header'
+import Alta from './components/Alta'
+import Consulta from './components/Consulta'
+import Modificacion from './components/Modificacion'
+import Salir from './components/Salir'
+import Home from './components/Home'
+import ModificarGaceta from './components/ModificarGaceta'
+import Login from './components/Login/Login';
 
 class App extends Component {
     constructor(){
@@ -45,7 +45,6 @@ class App extends Component {
                     this.state.user ?     
                             <div>  
                                 <Header />
-
                                 <Switch>
                                     <Route exact path="/" component={Home}/>
                                     <Route path="/alta" component={Alta}/>
@@ -56,12 +55,10 @@ class App extends Component {
                                     <Redirect to="/"/>
                                 </Switch>
                             </div> : 
-                            <div>
-                                <Switch>
-                                    <Route path="/login" component={Login} />
-                                    <Redirect to="/login"/>
-                                </Switch>
-                            </div>
+                            <Switch>
+                                <Route path="/login" component={Login} />
+                                <Redirect to="/login"/>
+                            </Switch>
                 }
                 </Router>
             </div>
