@@ -172,7 +172,7 @@ class Alta extends Component {
 
     mensajeRegistro () {
         if (this.state.ultimoRegistro.length !== 0) {
-            console.log('Aqui')
+            //console.log('Aqui')
             return(
                 window.setTimeout(() => { <p>Hola</p> }, 3000)
             );

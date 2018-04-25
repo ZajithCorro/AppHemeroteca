@@ -13,6 +13,7 @@ a {
   text-decoration: none;
 }
 
+
 a:hover {
   text-decoration: none;
 }
@@ -29,7 +30,7 @@ li {
 }
 
 .main {
-  margin: 64px 0 20px 0;
+  margin: 64px auto 20px auto;
 }
 
 .form, .contenedor-2-input, .contenedor-resultados .card .card-info {

@@ -2,11 +2,32 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import firebase, { auth } from '../../firebase.js'
+import styled from 'styled-components'
 
 // Assets
 import './styles.css'
 import users from '../img/usuarios.svg'
 import libro from '../img/libro.svg'
+
+const Fondo = styled.div`
+    background-color: rgba(211, 209, 209, 0.165);
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+`
+
+const Card = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    background: #fff;
+    border: 1px solid #DFE0E0;
+    border-radius: 5px;
+    box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    padding: 20px;
+    width: auto;
+`
 
 class Login extends Component {
     constructor(props) {
@@ -71,17 +92,18 @@ class Login extends Component {
     login () {
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u) => {}).catch((error) => {console.log(error)})
     }
+
     render() {
         return (
             <div className="fondo">
                 <div className="card">
                     <div className="contenedor row">
                         <img src={users} alt="" className="img"/>
-                        <div className="hide">Iconos diseñados por <a href="http://www.freepik.com" title="Freepik">Freepik</a> desde <a href="https://www.flaticon.es/" title="Flaticon">www.flaticon.com</a> con licencia <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+                        <p className="hide">Iconos diseñados por <a href="http://www.freepik.com" title="Freepik">Freepik</a> desde <a href="https://www.flaticon.es/" title="Flaticon">www.flaticon.com</a> con licencia <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></p>
                     </div>
                     <div className="contendor row">
                         <label className="label">Correo</label>
-                        <input type="text" className="input" value={this.state.email} onChange={this.handleInput} name="email"/>
+                        <input type="text" className="input" value={this.state.email} onChange={this.handleInput} name="email" autoComplete="off"/>
                     </div>
                     <div className="contenedor row">
                         <label className="label">Password</label>

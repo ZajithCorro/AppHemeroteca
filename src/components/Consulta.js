@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import firebase from '../firebase.js';
 
 // Components
-import Gaceta from './Card/GacetaCard'
+import Gaceta from './GacetaCard'
 
 class Consulta extends Component {
     constructor(){
@@ -14,7 +14,7 @@ class Consulta extends Component {
             fecha_ejemplar2: '',
             fecha_recepcion1: '',
             fecha_recepcion2: '',
-            files: [],
+            gacetas: [],
             errores: {
                 gaceta: '',
                 fechaEjem: '',
@@ -22,7 +22,7 @@ class Consulta extends Component {
                 fechaRec: '',
                 fechaRec2: ''
             },
-            validacionForm : true,
+            validacionForm: true,
         };
         this.handleInput = this.handleInput.bind(this)
         this.buscar = this.buscar.bind(this)
@@ -33,6 +33,7 @@ class Consulta extends Component {
     // Función que se activa al momento de hacer clic en el boton "Consultar". Seleccióna el campo con mayor prioridad y realiza un búsqueda.
     buscar () {
         let docs = [];
+        let temp = {}
 
         firebase.firestore()
             .collection('gacetas')
@@ -41,9 +42,11 @@ class Consulta extends Component {
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-                    docs.push(doc.data())
+                    temp = doc.data()
+                    temp.key = doc.id
+                    docs.push(temp);
                 })
-                this.setState({files : docs})
+                this.setState({gacetas : docs})
             })
             .catch(err => {
                 console.error('Error: ', err)
@@ -91,7 +94,7 @@ class Consulta extends Component {
             fecha_ejemplar2: '',
             fecha_recepcion1: '',
             fecha_recepcion2: '',
-            files: [],
+            gacetas: [],
             errores: {
                 gaceta: '',
                 fechaEjem: '',
@@ -137,22 +140,22 @@ class Consulta extends Component {
                     <div className="form">
                         <div className="contenedor">
                             <label className="label">Número de gaceta</label>
-                            <input type="text" name="gaceta" value={this.state.gaceta} onChange={this.handleInput} className={`${this.claseError(this.state.errores.gaceta)} input`}/>
+                            <input type="text" name="gaceta" value={this.state.gaceta} onChange={this.handleInput} className="input"/>
                             { this.state.errores.gaceta ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha del ejemplar</label>
-                            <div className="contenedor-2-input">
-                                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} value={this.state.fecha_ejemplar1} className={`${this.claseError(this.state.errores.fechaEjem)} input`}/>
-                                <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} value={this.state.fecha_ejemplar2} className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/>
+                            <div className="contenedor">
+                                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} value={this.state.fecha_ejemplar1} className="input"/>
+                                {/* <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} value={this.state.fecha_ejemplar2} className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/> */}
                             </div>
                             { (this.state.errores.fechaEjem2 && this.state.errores.fechaEjem) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha de recepción</label>
-                            <div className="contenedor-2-input">
-                                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} value={this.state.fecha_recepcion1} className={`${this.claseError(this.state.errores.fechaRec)} input`}/>
-                                <input type="date" name="fecha_recepcion2" onChange={this.handleInput} value={this.state.fecha_recepcion2} className={`${this.claseError(this.state.errores.fechaRec2)} input`}/>
+                            <div className="contenedor">
+                                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} value={this.state.fecha_recepcion1} className="input"/>
+                                {/* <input type="date" name="fecha_recepcion2" onChange={this.handleInput} value={this.state.fecha_recepcion2} className={`${this.claseError(this.state.errores.fechaRec2)} input`}/> */}
                             </div>
                             { (this.state.errores.fechaRec2 && this.state.errores.fechaRec) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
                         </div>
@@ -162,10 +165,8 @@ class Consulta extends Component {
                         <button className="btn" onClick={this.buscar} disabled={this.state.validacionForm}>Consultar</button>
                     </div>
                 </div>
-                <div className="contenedor">
-                    <h1 className="contenedor-titulo">Resultados de búsqueda</h1>
-                    { (this.state.files.length) ? <Gaceta  valor={this.state.files}/> : ''}
-                </div>
+                
+                { (this.state.gacetas.length) ? <Gaceta valor={this.state.gacetas}/> : ''}
             </div>
         );
     }
