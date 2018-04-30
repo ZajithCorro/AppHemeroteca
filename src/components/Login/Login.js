@@ -95,8 +95,8 @@ class Login extends Component {
 
     render() {
         return (
-            <div className="fondo">
-                <div className="card">
+            <Fondo>
+                <Card>
                     <div className="contenedor row">
                         <img src={users} alt="" className="img"/>
                         <p className="hide">Iconos diseñados por <a href="http://www.freepik.com" title="Freepik">Freepik</a> desde <a href="https://www.flaticon.es/" title="Flaticon">www.flaticon.com</a> con licencia <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></p>
@@ -113,8 +113,8 @@ class Login extends Component {
                     <div className="contenedor row-btn">
                         <button onClick={this.login} className="btn" disabled={this.state.validacion}>Iniciar sesión</button>
                     </div>
-                </div>
-            </div>
+                </Card>
+            </Fondo>
         ) 
   }
 }

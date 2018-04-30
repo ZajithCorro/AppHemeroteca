@@ -2,6 +2,9 @@
 import React, { Component } from 'react';
 import firebase from '../firebase.js';
 
+// Components
+import AlertRegistro from './AlertRegistro'
+
 class Alta extends Component {
     constructor(){
         super();
@@ -13,21 +16,31 @@ class Alta extends Component {
             paginas: '',
             tipoGaceta: '',
             fechaEjemplar: '',
+            fechaRecep: '',
+            numEjemplar: '',
+            personaEntrega: '',
+            ejemHemeroteca: '',
+            entrega: [],
             formError: {
                 numero: '',
                 tomo: '',
                 paginas: '',
                 tipo: '',
-                fecha: ''
+                fecha: '',
+                recepcion: '',
+                ejemplares: '',
+                entrega: '',
+                inventario: '',
+                personaEntrega: ''
             },
             validacionTotal : true,
-            ultimoRegistro: []
+            ultimoRegistro: [],
+            showAlert: false
         });
 
         this.handleInput = this.handleInput.bind(this);
         this.limpiarInputs = this.limpiarInputs.bind(this);
         this.nuevoRegistro = this.nuevoRegistro.bind(this);
-        this.mensajeRegistro = this.mensajeRegistro.bind(this)
         window.document.title = 'Hemeroteca | Alta'
     }
 
@@ -54,14 +67,25 @@ class Alta extends Component {
         for (let i in this.state.formError) {
             if (this.state.formError[i] === false) a++;
         }
-        (a === 5) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
+        (a === 10) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
     }
 
     // Función que escucha los cambios en los inputs y los asigna al state correcto.
     handleInput (event) {
         let name = event.target.name;
         let value = event.target.value;
-        this.setState({ [name]: value }, () => { this.validarInput(name, value) });
+
+        if (name === 'entrega') {
+            if (event.target.checked === true) {
+                this.setState({ [name]: [...this.state.entrega, value] }, () => {this.validarInput(name, value)})
+            } else {
+                let arrayAux = this.state.entrega;
+                arrayAux.splice(arrayAux.indexOf(value), 1)
+                this.setState({ [name]: arrayAux }, () => { this.validarInput(name, value) });
+            }
+        } else {
+            this.setState({ [name]: value }, () => { this.validarInput(name, value) });
+        }
     }
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
@@ -69,28 +93,48 @@ class Alta extends Component {
         const { formError }  = this.state;
 
         switch (name) {
-        case 'numeroGaceta':
-            formError.numero = (value.match(/^\d+$/)) ? false : true;
-            break;
+            case 'numeroGaceta':
+                formError.numero = (value.match(/^\d+$/)) ? false : true;
+                break;
 
-        case 'tomoGaceta':
-            formError.tomo = (value.match(/^\d+$/)) ? false : true;
-            break;
+            case 'tomoGaceta':
+                formError.tomo = (value.match(/^\d+$/)) ? false : true;
+                break;
 
-        case 'paginas':formError
-            formError.paginas = (value.match(/^\d+$/)) ? false : true;
-            break;
+            case 'paginas':
+                formError.paginas = (value.match(/^\d+$/)) ? false : true;
+                break;
 
-        case 'fechaEjemplar':
-            formError.fecha = (value) ? false : true;
-            break;
+            case 'fechaEjemplar':
+                formError.fecha = (value) ? false : true;
+                break;
 
-        case 'tipoGaceta':
-            formError.tipo = (value) ? false : true;
-            break;
+            case 'tipoGaceta':
+                formError.tipo = (value) ? false : true;
+                break;
 
-        default:
-            break;
+            case 'fechaRecep':
+                formError.recepcion = (value) ? false : true;
+                break;
+
+            case 'numEjemplar':
+                formError.ejemplares = (value.match(/^\d+$/)) ? false : true;
+                break;
+
+            case 'personaEntrega':
+                formError.entrega = (value.match(/^[A-Z][a-zA-Z\s]*$/)) ? false : true;
+                break;
+
+            case 'ejemHemeroteca':
+                formError.inventario = (value.match(/^\d+$/)) ? false : true;
+                break;
+
+            case 'entrega':
+                formError.personaEntrega = (this.state.entrega.length > 0) ? false : true;
+                break;
+
+            default:
+                break;
         }
 
         this.setState({ formError : formError })
@@ -108,6 +152,8 @@ class Alta extends Component {
 
     // Función que se activa al hacer clic en el botón "Limpiar". Limpia el contenido del los input por medio del "State".
     limpiarInputs (event) {
+        event.preventDefault()
+
         this.setState({
             numeroGaceta: '',
             paginas: '',
@@ -129,54 +175,39 @@ class Alta extends Component {
         window.document.getElementById('Alcance').checked = false;
     }
 
-    // Función que convierte la fecha ingresada en el formulario en un formato correcto para la BD.
-    fecha (date) {
-        let aux = new Date(date);
-        let fecha = new Date()
-
-        fecha.setDate(aux.getDate() + 1)
-        fecha.setMonth(aux.getMonth())
-        fecha.setFullYear(aux.getFullYear())
-
-        return fecha;
-    }
-
     // Función que se activa al momento de hacer clic en el boton "Guardar Registro". Crea un nuevo registro en la BD.
     nuevoRegistro (event) {
         event.preventDefault();
+        console.log(this.state)
 
-        let data = {
-            id : this.state.folioGaceta,
-            fecha : this.fecha(this.state.fechaEjemplar),
-            numero_gaceta : parseInt(this.state.numeroGaceta),
-            paginas : parseInt(this.state.paginas),
-            tipo : this.state.tipoGaceta,
-            tiraje : parseInt(this.state.tomoGaceta),
-            existencia : parseInt(this.state.numeroGaceta) * 10
-        }
+        // let data = {
+        //     id : this.state.folioGaceta,
+        //     fecha : this.state.fechaEjemplar,
+        //     numero_gaceta : parseInt(this.state.numeroGaceta),
+        //     paginas : parseInt(this.state.paginas),
+        //     tipo : this.state.tipoGaceta,
+        //     tiraje : parseInt(this.state.tomoGaceta),
+        //     existencia : parseInt(this.state.numeroGaceta) * 10
+        // }
 
-        firebase.firestore()
-            .collection('gacetas')
-            .add(data)
-            .then(docRef => {
-                this.setState({ 
-                    folioGaceta: this.state.folioGaceta + 1,
-                    ultimoRegistro: data
-                })
-                this.limpiarInputs(event)
-            })
-            .catch(err => {
-                console.log('Error: ', err)
-            });
-    }
+        // firebase.firestore()
+        //     .collection('gacetas')
+        //     .add(data)
+        //     .then(docRef => {
+        //         this.setState({ 
+        //             folioGaceta: this.state.folioGaceta + 1,
+        //             ultimoRegistro: data,
+        //             showAlert: true
+        //         })
+        //         this.limpiarInputs(event)
+        //     })
+        //     .catch(err => {
+        //         console.log('Error: ', err)
+        //     });
 
-    mensajeRegistro () {
-        if (this.state.ultimoRegistro.length !== 0) {
-            //console.log('Aqui')
-            return(
-                window.setTimeout(() => { <p>Hola</p> }, 3000)
-            );
-        }
+        // setTimeout(() => {
+        //     this.setState({ showAlert: false });
+        // }, 10000);
     }
 
     render() {
@@ -234,56 +265,59 @@ class Alta extends Component {
                         <div className="form">
                             <div className="contenedor">
                                 <label className="label">Fecha de recepción</label>
-                                <input type="date" name="fechaRecepcion" className="input"/>
+                                <input type="date" name="fechaRecep" value={this.state.fechaRecep} onChange={this.handleInput} className={`${this.claseError(this.state.formError.recepcion)} input`}/>
+                                { this.state.formError.recepcion ? <div className="error">El campo debe de estar lleno.</div> : '' }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Número de ejemplares</label>
-                                <input type="text" name="ejemplares" className="input"/>
+                                <input type="text" name="numEjemplar" value={this.state.numEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.formError.ejemplares)} input`}/>
+                                { this.state.formError.ejemplares ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                             </div>
                             <div className="contenedor">
-                                <label className="label" htmlFor="Nombre persona que entrega">Persona quién entrega</label>
-                                <input type="text" name="nombrePersona" className="input"/>
+                                <label className="label">Persona quién entrega</label>
+                                <input type="text" name="personaEntrega" value={this.state.personaEntrega} onChange={this.handleInput} className={`${this.claseError(this.state.formError.entrega)} input`}/>
+                                { this.state.formError.entrega ? <div className="error">El campo debe de estar lleno, debe comenzar con una mayuscula y no debe contener números.</div> : '' }
                             </div>
                             <div className="contenedor">
-                                <label className="label" htmlFor="Número">Ejemplares en hemeroteca</label>
-                                <input type="text" name="ejemplaresExistencia" className="input"/>
+                                <label className="label">Ejemplares en hemeroteca</label>
+                                <input type="text" name="ejemHemeroteca" value={this.state.ejemHemeroteca} onChange={this.handleInput} className={`${this.claseError(this.state.formError.inventario)} input`}/>
+                                { this.state.formError.inventario ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                             </div>
                             <div className="contenedor entrega">
                                 <label className="label">Entregado a</label>
                                 <div className="contenedor-radio">
                                 <div>
-                                    <input id="Director" type="radio" name="entrega" value="Director"/>
-                                    <label htmlFor="Director">Director</label>
+                                    <input type="checkbox" name="entrega" value="Director" onChange={this.handleInput}/>
+                                    <label>Director</label>
                                 </div>
                                 <div>
-                                    <input id="Hemeroteca" type="radio" name="entrega" value="Hemeroteca"/>
-                                    <label htmlFor="Hemeroteca">Hemeroteca</label>
+                                    <input type="checkbox" name="entrega" value="Hemeroteca" onChange={this.handleInput}/>
+                                    <label>Hemeroteca</label>
                                 </div>
                                 <div>
-                                    <input id="Ruta" type="radio" name="entrega" value="Ruta"/>
-                                    <label htmlFor="Ruta">Ruta</label>
+                                    <input type="checkbox" name="entrega" value="Ruta" onChange={this.handleInput}/>
+                                    <label >Ruta</label>
                                 </div>
                                 <div>
-                                    <input id="Modulo" type="radio" name="entrega" value="Modulo"/>
-                                    <label htmlFor="Modulo">Módulo</label>
+                                    <input type="checkbox" name="entrega" value="Modulo" onChange={this.handleInput}/>
+                                    <label >Módulo</label>
                                 </div>
                                 <div>
-                                    <input id="Suscripciones" type="radio" name="entrega" value="Suscripciones"/>
-                                    <label htmlFor="Suscripciones">Suscripciones</label>
+                                    <input type="checkbox" name="entrega" value="Suscripciones" onChange={this.handleInput}/>
+                                    <label >Suscripciones</label>
                                 </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="contenedor-btns">
-                        <button className="btn">Limpiar campos</button>
+                        <button className="btn" onClick={this.limpiarInputs}>Limpiar campos</button>
                         <button className="btn" onClick={this.nuevoRegistro} id="btnRegistro" disabled={this.state.validacionTotal}>Guardar registro</button>
                     </div>
-                    {this.mensajeRegistro()}
                 </form>
             </div>
         );
-  }
+    }
 }
 
 export default Alta

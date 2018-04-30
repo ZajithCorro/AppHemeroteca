@@ -107,7 +107,7 @@ class Gaceta extends Component {
                         <div className="contenedor">
                             <label className="label">Fecha</label>
                             <p>
-                                { gaceta.fecha.getDate() + ' / ' + (gaceta.fecha.getMonth() + 1) +  ' / ' +  gaceta.fecha.getFullYear() }
+                                { gaceta.fecha }
                             </p>
                         </div>
                         <div className="contenedor">

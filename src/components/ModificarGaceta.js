@@ -41,7 +41,7 @@ class Modificar extends Component {
             <div className="main">
                 <p>{this.props.match.params.id}</p>
                 <p>
-                    {(this.state.gaceta) ? this.state.gaceta.key : 'Error al acceder al registro'}
+                    {(this.state.gaceta) ? JSON.stringify(this.state.gaceta) : 'Error al acceder al registro'}
                 </p>
             </div>
         );

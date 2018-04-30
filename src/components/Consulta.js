@@ -10,23 +10,21 @@ class Consulta extends Component {
         super();
         this.state = {
             gaceta: '',
-            fecha_ejemplar1: '',
-            fecha_ejemplar2: '',
-            fecha_recepcion1: '',
-            fecha_recepcion2: '',
+            fecha_ejemplar: '',
+            fecha_recepcion: '',
             gacetas: [],
             errores: {
                 gaceta: '',
                 fechaEjem: '',
-                fechaEjem2: '',
-                fechaRec: '',
-                fechaRec2: ''
+                fechaRec: ''
             },
             validacionForm: true,
         };
+
         this.handleInput = this.handleInput.bind(this)
         this.buscar = this.buscar.bind(this)
         this.limpiar = this.limpiar.bind(this)
+
         window.document.title = 'Hemeroteca | Consulta'
     }
 
@@ -37,8 +35,7 @@ class Consulta extends Component {
 
         firebase.firestore()
             .collection('gacetas')
-            .where('numero_gaceta', '==' , parseInt(this.state.gaceta))
-            .limit(2)
+            .where('fecha', '==' , this.state.fecha_ejemplar1)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
@@ -62,20 +59,12 @@ class Consulta extends Component {
                 errores.gaceta = (val.match(/^\d+$/)) ? false : true;
                 break;
             
-            case 'fecha_ejemplar1':
+            case 'fecha_ejemplar':
                 errores.fechaEjem = (val.length) ? false : true;
                 break;
 
-            case 'fecha_ejemplar2':
-                errores.fechaEjem2 = (val.length) ? false : true;
-                break;
-
-            case 'fecha_recepcion1':
+            case 'fecha_recepcion':
                 errores.fechaRec = (val.length) ? false : true;
-                break;
-
-            case 'fecha_recepcion2':
-                errores.fechaRec2 = (val.length) ? false : true;
                 break;
 
             default:
@@ -90,17 +79,13 @@ class Consulta extends Component {
     limpiar () {
         this.setState({
             gaceta: '',
-            fecha_ejemplar1: '',
-            fecha_ejemplar2: '',
-            fecha_recepcion1: '',
-            fecha_recepcion2: '',
+            fecha_ejemplar: '',
+            fecha_recepcion: '',
             gacetas: [],
             errores: {
                 gaceta: '',
                 fechaEjem: '',
-                fechaEjem2: '',
-                fechaRec: '',
-                fechaRec2: ''
+                fechaRec: ''
             },
             validacionForm : true,
         })
@@ -140,24 +125,32 @@ class Consulta extends Component {
                     <div className="form">
                         <div className="contenedor">
                             <label className="label">Número de gaceta</label>
-                            <input type="text" name="gaceta" value={this.state.gaceta} onChange={this.handleInput} className="input"/>
-                            { this.state.errores.gaceta ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
+                            <input 
+                                type="text" 
+                                name="gaceta" 
+                                value={this.state.gaceta} 
+                                onChange={this.handleInput} className="input"
+                                disabled={(this.state.fecha_ejemplar || this.state.fecha_recepcion) ? true : false }/>
+                            { this.state.errores.gaceta ? <div className="error">El campo no debe contener letras o espacios.</div> : '' }
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha del ejemplar</label>
-                            <div className="contenedor">
-                                <input type="date" name="fecha_ejemplar1" onChange={this.handleInput} value={this.state.fecha_ejemplar1} className="input"/>
-                                {/* <input type="date" name="fecha_ejemplar2" onChange={this.handleInput} value={this.state.fecha_ejemplar2} className={`${this.claseError(this.state.errores.fechaEjem2)} input`}/> */}
-                            </div>
-                            { (this.state.errores.fechaEjem2 && this.state.errores.fechaEjem) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
+                            <input 
+                                type="date" 
+                                name="fecha_ejemplar" 
+                                onChange={this.handleInput} 
+                                value={this.state.fecha_ejemplar1} className="input"
+                                disabled={(this.state.gaceta || this.state.fecha_recepcion) ? true : false } />
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha de recepción</label>
-                            <div className="contenedor">
-                                <input type="date" name="fecha_recepcion1" onChange={this.handleInput} value={this.state.fecha_recepcion1} className="input"/>
-                                {/* <input type="date" name="fecha_recepcion2" onChange={this.handleInput} value={this.state.fecha_recepcion2} className={`${this.claseError(this.state.errores.fechaRec2)} input`}/> */}
-                            </div>
-                            { (this.state.errores.fechaRec2 && this.state.errores.fechaRec) ? <div className="error">Alguno de los dos campos debde de estar lleno.</div> : '' }
+                            <input 
+                                type="date" 
+                                name="fecha_recepcion" 
+                                onChange={this.handleInput} 
+                                value={this.state.fecha_recepcion1} 
+                                className="input"
+                                disabled={(this.state.fecha_ejemplar || this.state.gaceta) ? true : false }/>
                         </div>
                     </div>
                     <div className="contenedor-btns">
