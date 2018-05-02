@@ -88,6 +88,8 @@ class Gaceta extends Component {
         super(props);
     }
 
+    
+
     render() {
         const gacetas = this.props.valor.map((gaceta,i) => {
             return (
@@ -98,41 +100,42 @@ class Gaceta extends Component {
                     <CardInfo>
                         <div className="contenedor">
                             <label className="label">Gaceta</label>
-                            <p>{gaceta.numero_gaceta}</p>
+                            <p>{ gaceta.numero }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Tipo</label>
-                            <p>{gaceta.tipo}</p>
+                            <p>{ gaceta.tipo }</p>
                         </div>
                         <div className="contenedor">
-                            <label className="label">Fecha</label>
-                            <p>
-                                { gaceta.fecha }
-                            </p>
+                            <label className="label">Fecha publicación</label>
+                            <p>{ gaceta.fecha_ejemplar }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Páginas</label>
-                            <p>{gaceta.paginas}</p>
+                            <p>{ gaceta.paginas }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Tiraje</label>
-                            <p>{gaceta.tiraje}</p>
+                            <p>{ gaceta.tomo }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Existencia</label>
-                            <p>{gaceta.existencia}</p>
+                            <p>{ gaceta.inventario }</p>
                         </div>
                     </CardInfo>
                     <CardOpc>
+                        { (this.props.modificar === true) ?
+                                <NavLink 
+                                    to={{
+                                        pathname : `/modificacion/${gaceta.folio}`,
+                                        state : {
+                                            gaceta: gaceta
+                                        }
+                                    }} className='btn'> Modificar
+                                </NavLink> : null }
+
                         <NavLink 
-                            to={{
-                                pathname : `/modificacion/${gaceta.id}`,
-                                state : {
-                                    gaceta: gaceta
-                                }
-                            }} 
-                        className="btn">
-                            Modificar
+                            to={{ pathname : '' }} className="btn"> Ver
                         </NavLink>
                     </CardOpc>
                 </Card>
