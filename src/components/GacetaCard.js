@@ -88,10 +88,13 @@ class Gaceta extends Component {
         super(props);
     }
 
-    
-
     render() {
         const gacetas = this.props.valor.map((gaceta,i) => {
+            let tipo;
+
+            for (let i in gaceta.tipo) {
+                if (gaceta.tipo[i] === true) tipo = i;
+            }
             return (
                 <Card key={i}>
                     <Image>
@@ -104,7 +107,7 @@ class Gaceta extends Component {
                         </div>
                         <div className="contenedor">
                             <label className="label">Tipo</label>
-                            <p>{ gaceta.tipo }</p>
+                            <p>{ tipo }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Fecha publicación</label>

@@ -13,14 +13,24 @@ class Alta extends Component {
             folio: '',
             numeroGaceta: '',
             tomoGaceta: '',
-            tipoGaceta: '',
+            tipoGaceta: {
+                'Ordinaria': false,
+                'Extraordinaria': false,
+                'Alcance': false
+            },
             paginas: '',
             dateEjemplar: '',
             dateRecepcion: '',
             ejemplares: '',
             nombreEntrega: '',
             inventario: '',
-            opcEntrega: [],
+            opcEntrega: {
+                'Director': false,
+                'Hemeroteca': false,
+                'Ruta': false,
+                'Modulo': false,
+                'Suscripciones': false
+            },
             inputErrores: {
                 numero: '',
                 tomo: '',
@@ -48,12 +58,12 @@ class Alta extends Component {
     componentWillMount () {
         firebase.firestore()
             .collection('gacetas')
-            .orderBy('id', 'desc')
+            .orderBy('folio', 'desc')
             .limit(1)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-                    (doc.length !== 0) ? this.setState({ folioGaceta: doc.data().id + 1 }) : this.setState({ folioGaceta: 1 });
+                    (doc.exists) ? this.setState({ folio : doc.data().folio + 1}) : this.setState({ folio: 1});
                 })
             })
             .catch(err => {
@@ -74,23 +84,40 @@ class Alta extends Component {
     handleInput (event) {
         let name = event.target.name;
         let value = event.target.value;
+        
+        this.setState({ [name]: value }, () => { this.validarInput(name, value) });
+    }
 
-        if (name === 'opcEntrega') {
-            if (event.target.checked === true) {
-                this.setState({ [name]: [...this.state.opcEntrega, value] }, () => {this.validarInput(name, value)})
+    handleCheckbox(event) {
+        let name = event.target.name;
+        let value = event.target.value;
+        let { opcEntrega } = this.state;
+
+        opcEntrega[value] = !opcEntrega[value];
+        this.setState({ opcEntrega: opcEntrega} , () => { this.validarInput(name, value) })
+    }
+
+    handleRadio(event) {
+        let name = event.target.name;
+        let value = event.target.value;
+        let { tipoGaceta } = this.state;
+
+        for (let i in tipoGaceta) {
+            if (i === value) {
+                tipoGaceta[i] = !tipoGaceta[i]
             } else {
-                let arrayAux = this.state.opcEntrega;
-                arrayAux.splice(arrayAux.indexOf(value), 1)
-                this.setState({ [name]: arrayAux }, () => { this.validarInput(name, value) });
+                tipoGaceta[i] = false
             }
-        } else {
-            this.setState({ [name]: value }, () => { this.validarInput(name, value) });
         }
+
+        this.setState({tipoGaceta: tipoGaceta} , () => { this.validarInput(name, value) })
     }
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
     validarInput (name, value) {
         const { inputErrores }  = this.state;
+        const { opcEntrega } = this.state;
+        let count = 0;
 
         switch (name) {
             case 'numeroGaceta':
@@ -130,14 +157,18 @@ class Alta extends Component {
                 break;
 
             case 'opcEntrega':
-                inputErrores.personaEntrega = (this.state.opcEntrega.length > 0) ? false : true;
+                for (let i in opcEntrega) {
+                    if (opcEntrega[i] === true) count++
+                }
+
+                inputErrores.personaEntrega = (count != 0) ? false : true;
                 break;
 
             default:
                 break;
         }
 
-        this.setState({ inputErrores : inputErrores })
+        this.setState({inputErrores : inputErrores})
         this.activarBoton();
     }
 
@@ -184,12 +215,17 @@ class Alta extends Component {
         window.document.getElementById('Extraordinaria').checked = false;
         window.document.getElementById('Ordinaria').checked = false;
         window.document.getElementById('Alcance').checked = false;
-    }
+        window.document.getElementById('Director').checked = false;
+        window.document.getElementById('Hemeroteca').checked = false;
+        window.document.getElementById('Ruta').checked = false;
+        window.document.getElementById('Modulo').checked = false;
+        window.document.getElementById('Suscripciones').checked = false;
+}
 
     // Función que se activa al momento de hacer clic en el boton "Guardar Registro". Crea un nuevo registro en la BD.
     nuevoRegistro (event) {
         let data = {
-            folio : this.state.folioGaceta,
+            folio : this.state.folio,
             numero : parseInt(this.state.numeroGaceta),
             tomo : parseInt(this.state.tomoGaceta),
             tipo : this.state.tipoGaceta,
@@ -243,15 +279,15 @@ class Alta extends Component {
                                 <label className="label">Tipo</label>
                                 <div className="contenedor-radio">
                                 <div>
-                                    <input id="Ordinaria" type="radio" name="tipoGaceta" value="Ordinaria" onChange={this.handleInput}/>
+                                    <input id="Ordinaria" type="radio" name="tipoGaceta" value="Ordinaria" onChange={this.handleRadio.bind(this)}/>
                                     <label htmlFor="Ordinaria">Ordinaria</label>
                                 </div>
                                 <div>
-                                    <input id="Extraordinaria" type="radio" name="tipoGaceta" value="Extraordinaria" onChange={this.handleInput}/>
+                                    <input id="Extraordinaria" type="radio" name="tipoGaceta" value="Extraordinaria" onChange={this.handleRadio.bind(this)}/>
                                     <label htmlFor="Extraordinaria">Extraordinaria</label>
                                 </div>
                                 <div>
-                                    <input id="Alcance" type="radio" name="tipoGaceta" value="Alcance" onChange={this.handleInput}/>
+                                    <input id="Alcance" type="radio" name="tipoGaceta" value="Alcance" onChange={this.handleRadio.bind(this)}/>
                                     <label htmlFor="Alcance">Alcance</label>
                                 </div>
                                 </div>
@@ -299,23 +335,23 @@ class Alta extends Component {
                                 <label className="label">Entregado a</label>
                                 <div className="contenedor-radio">
                                 <div>
-                                    <input type="checkbox" name="opcEntrega" value="Director" onChange={this.handleInput}/>
+                                    <input type="checkbox" name="opcEntrega" value="Director" onChange={this.handleCheckbox.bind(this)} id="Director"/>
                                     <label>Director</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="opcEntrega" value="Hemeroteca" onChange={this.handleInput}/>
+                                    <input type="checkbox" name="opcEntrega" value="Hemeroteca" onChange={this.handleCheckbox.bind(this)} id="Hemeroteca"/>
                                     <label>Hemeroteca</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="opcEntrega" value="Ruta" onChange={this.handleInput}/>
+                                    <input type="checkbox" name="opcEntrega" value="Ruta" onChange={this.handleCheckbox.bind(this)} id="Ruta"/>
                                     <label >Ruta</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="opcEntrega" value="Modulo" onChange={this.handleInput}/>
+                                    <input type="checkbox" name="opcEntrega" value="Modulo" onChange={this.handleCheckbox.bind(this)} id="Modulo"/>
                                     <label >Módulo</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="opcEntrega" value="Suscripciones" onChange={this.handleInput}/>
+                                    <input type="checkbox" name="opcEntrega" value="Suscripciones" onChange={this.handleCheckbox.bind(this)} id="Suscripciones"/>
                                     <label >Suscripciones</label>
                                 </div>
                                 </div>

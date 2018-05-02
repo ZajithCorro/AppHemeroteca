@@ -109,6 +109,7 @@ input[type="radio"], input[type="checkbox"] {
   font-size: 1.2rem;
   line-height: 1.5;
   padding: .5rem 2.5rem;
+  margin-left: 10px;
 }
 
 .btn:enabled:hover {

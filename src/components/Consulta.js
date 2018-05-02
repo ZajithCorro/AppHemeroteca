@@ -75,6 +75,7 @@ class Consulta extends Component {
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
+                    console.log(doc.data())
                     temp = doc.data()
                     temp.key = doc.id
                     docs.push(temp);
