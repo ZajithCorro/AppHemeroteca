@@ -119,7 +119,7 @@ class Gaceta extends Component {
                         </div>
                         <div className="contenedor">
                             <label className="label">Tiraje</label>
-                            <p>{ gaceta.tomo }</p>
+                            <p>{ gaceta.ejemplares }</p>
                         </div>
                         <div className="contenedor">
                             <label className="label">Existencia</label>

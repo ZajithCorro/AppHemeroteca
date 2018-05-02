@@ -26,9 +26,7 @@ class Modificar extends Component {
         let aux = []
 
         for (let i in tipo) {
-            if (tipo[i] === true) {
-                this.setState({ tipoGaceta : i })
-            }
+            if (tipo[i] === true) this.setState({ tipoGaceta : i })
         }
 
         for (let i in entregado) {
