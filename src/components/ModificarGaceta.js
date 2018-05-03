@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { NavLink } from 'react-router-dom';
 import firabase from '../firebase'
 
 class Modificar extends Component {
@@ -137,7 +138,9 @@ class Modificar extends Component {
                                 </div>
                             </div>
                             <div className="contenedor-btns">
-                                <button className="btn">Limpiar campos</button>
+                                <NavLink
+                                    to = {{pathname: '/modificacion'}}
+                                    className="btn"> Cancelar </NavLink>
                                 <button className="btn">Guardar registro</button>
                             </div>
                         </div>

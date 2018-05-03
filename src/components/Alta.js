@@ -121,15 +121,15 @@ class Alta extends Component {
 
         switch (name) {
             case 'numeroGaceta':
-                inputErrores.numero = (value.match(/^\d+$/)) ? false : true;
+                inputErrores.numero = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
 
             case 'tomoGaceta':
-                inputErrores.tomo = (value.match(/^\d+$/)) ? false : true;
+                inputErrores.tomo = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
 
             case 'paginas':
-                inputErrores.paginas = (value.match(/^\d+$/)) ? false : true;
+                inputErrores.paginas = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
 
             case 'dateEjemplar':
@@ -149,8 +149,11 @@ class Alta extends Component {
                 break;
 
             case 'nombreEntrega':
-                inputErrores.entrega = (value.match(/^[A-Z][a-zA-Z\s]*$/)) ? false : true;
+                inputErrores.entrega = (value.match(/(^[A-Z])([a-z]*$)/)) ? false : true;
                 break;
+
+                // Pruebas de patrones
+                // ([A-Z][a-z]+[\s]*)+
 
             case 'inventario':
                 inputErrores.inventario = (value.match(/^\d+$/)) ? false : true;
@@ -273,7 +276,7 @@ class Alta extends Component {
                             <div className="contenedor">
                                 <label className="label">Número de tomo</label>
                                 <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.tomo)} input`}/>
-                                { this.state.inputErrores.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
+                                { this.state.inputErrores.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras, espacios o empezar con cero.</div> : '' }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Tipo</label>
