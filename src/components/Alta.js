@@ -134,6 +134,17 @@ class Alta extends Component {
 
             case 'dateEjemplar':
                 inputErrores.fecha = (value) ? false : true;
+
+                if (!value && this.state.dateRecepcion) {
+                    inputErrores.recepcion = true
+                }
+
+                if (value && this.state.dateRecepcion) {
+                    let dateEjem = new Date(value);
+                    let dateRecep = new Date(this.state.dateRecepcion)
+
+                    inputErrores.recepcion = (dateRecep >= dateEjem) ? false : true
+                }
                 break;
 
             case 'tipoGaceta':
@@ -141,22 +152,26 @@ class Alta extends Component {
                 break;
 
             case 'dateRecepcion':
-                inputErrores.recepcion = (value) ? false : true;
+                let dateEjem = new Date(this.state.dateEjemplar);
+                let dateRecep = new Date(value)
+
+                inputErrores.recepcion = (dateRecep >= dateEjem) ? false : true
                 break;
 
             case 'ejemplares':
-                inputErrores.ejemplares = (value.match(/^\d+$/)) ? false : true;
+                inputErrores.ejemplares = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
 
             case 'nombreEntrega':
-                inputErrores.entrega = (value.match(/(^[A-Z])([a-z]*$)/)) ? false : true;
+                inputErrores.entrega = (value.match(/^[A-Z][a-z]*[a-z]+$/)) ? false : true;
                 break;
 
                 // Pruebas de patrones
                 // ([A-Z][a-z]+[\s]*)+
+                // (^[A-Z][a-z]+)(\s)*([A-Z]*[a-z]+$)*
 
             case 'inventario':
-                inputErrores.inventario = (value.match(/^\d+$/)) ? false : true;
+                inputErrores.inventario = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
 
             case 'opcEntrega':
@@ -303,7 +318,7 @@ class Alta extends Component {
                             <div className="contenedor">
                                 <label className="label">Fecha del ejemplar</label>
                                 <input type="date" name="dateEjemplar" value={this.state.dateEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.fecha)} input`}/>
-                                { this.state.inputErrores.fecha ? <div className="error">El campo debe de estar lleno.</div> : '' }
+                                { this.state.inputErrores.fecha ? <div className="error">El campo debe de estar lleno y no puede ser posterior a la fecha de recepción.</div> : '' }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Archivo digital</label>
@@ -317,7 +332,7 @@ class Alta extends Component {
                             <div className="contenedor">
                                 <label className="label">Fecha de recepción</label>
                                 <input type="date" name="dateRecepcion" value={this.state.dateRecepcion} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.recepcion)} input`}/>
-                                { this.state.inputErrores.recepcion ? <div className="error">El campo debe de estar lleno.</div> : '' }
+                                { this.state.inputErrores.recepcion ? <div className="error">El campo debe de estar lleno y no puede ser anterior a la fecha de publicación.</div> : '' }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Número de ejemplares</label>
