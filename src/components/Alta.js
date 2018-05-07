@@ -149,6 +149,15 @@ class Alta extends Component {
 
             case 'tipoGaceta':
                 inputErrores.tipo = (value) ? false : true;
+
+                if (value === 'Extraordinaria') {
+                    inputErrores.tomo = false
+                } else {
+                    if (!this.state.tomoGaceta) {
+                        inputErrores.tomo = true;
+                    }
+                }
+
                 break;
 
             case 'dateRecepcion':
@@ -238,14 +247,14 @@ class Alta extends Component {
         window.document.getElementById('Ruta').checked = false;
         window.document.getElementById('Modulo').checked = false;
         window.document.getElementById('Suscripciones').checked = false;
-}
+    }
 
     // Función que se activa al momento de hacer clic en el boton "Guardar Registro". Crea un nuevo registro en la BD.
     nuevoRegistro (event) {
         let data = {
             folio : this.state.folio,
             numero : parseInt(this.state.numeroGaceta),
-            tomo : parseInt(this.state.tomoGaceta),
+            tomo : parseInt(this.state.tomoGaceta) || null,
             tipo : this.state.tipoGaceta,
             paginas : parseInt(this.state.paginas),
             fecha_ejemplar : this.state.dateEjemplar,
@@ -256,24 +265,26 @@ class Alta extends Component {
             entregado: this.state.opcEntrega
         }
 
-        firebase.firestore()
-            .collection('gacetas')
-            .add(data)
-            .then(docRef => {
-                this.setState({ 
-                    folio: this.state.folio + 1,
-                    ultimoRegistro: data,
-                    showAlert: true
-                })
-                this.limpiarInputs(event)
-            })
-            .catch(err => {
-                console.log('Error: ', err)
-            });
+        console.log(data)
 
-        setTimeout(() => {
-            this.setState({ showAlert: false });
-        }, 10000);
+        // firebase.firestore()
+        //     .collection('gacetas')
+        //     .add(data)
+        //     .then(docRef => {
+        //         this.setState({ 
+        //             folio: this.state.folio + 1,
+        //             ultimoRegistro: data,
+        //             showAlert: true
+        //         })
+        //         this.limpiarInputs(event)
+        //     })
+        //     .catch(err => {
+        //         console.log('Error: ', err)
+        //     });
+
+        // setTimeout(() => {
+        //     this.setState({ showAlert: false });
+        // }, 10000);
     }
 
     render() {
@@ -289,26 +300,9 @@ class Alta extends Component {
                                 { this.state.inputErrores.numero ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                             </div>
                             <div className="contenedor">
-                                <label className="label">Número de tomo</label>
-                                <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.tomo)} input`}/>
-                                { this.state.inputErrores.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras, espacios o empezar con cero.</div> : '' }
-                            </div>
-                            <div className="contenedor">
-                                <label className="label">Tipo</label>
-                                <div className="contenedor-radio">
-                                <div>
-                                    <input id="Ordinaria" type="radio" name="tipoGaceta" value="Ordinaria" onChange={this.handleRadio.bind(this)}/>
-                                    <label htmlFor="Ordinaria">Ordinaria</label>
-                                </div>
-                                <div>
-                                    <input id="Extraordinaria" type="radio" name="tipoGaceta" value="Extraordinaria" onChange={this.handleRadio.bind(this)}/>
-                                    <label htmlFor="Extraordinaria">Extraordinaria</label>
-                                </div>
-                                <div>
-                                    <input id="Alcance" type="radio" name="tipoGaceta" value="Alcance" onChange={this.handleRadio.bind(this)}/>
-                                    <label htmlFor="Alcance">Alcance</label>
-                                </div>
-                                </div>
+                                <label className="label">Fecha del ejemplar</label>
+                                <input type="date" name="dateEjemplar" value={this.state.dateEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.fecha)} input`}/>
+                                { this.state.inputErrores.fecha ? <div className="error">El campo debe de estar lleno y no puede ser posterior a la fecha de recepción.</div> : '' }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Páginas</label>
@@ -316,13 +310,30 @@ class Alta extends Component {
                                 { this.state.inputErrores.paginas ? <div className="error">El campo debe de estar lleno y no debe contener letras o espacios.</div> : '' }
                             </div>
                             <div className="contenedor">
-                                <label className="label">Fecha del ejemplar</label>
-                                <input type="date" name="dateEjemplar" value={this.state.dateEjemplar} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.fecha)} input`}/>
-                                { this.state.inputErrores.fecha ? <div className="error">El campo debe de estar lleno y no puede ser posterior a la fecha de recepción.</div> : '' }
-                            </div>
-                            <div className="contenedor">
                                 <label className="label">Archivo digital</label>
                                 <input type="text" className="input"/>
+                            </div>
+                            <div className="contenedor">
+                                <label className="label">Tipo</label>
+                                <div className="contenedor-radio">
+                                    <div>
+                                        <input id="Ordinaria" type="radio" name="tipoGaceta" value="Ordinaria" onChange={this.handleRadio.bind(this)}/>
+                                        <label htmlFor="Ordinaria">Ordinaria</label>
+                                    </div>
+                                    <div>
+                                        <input id="Extraordinaria" type="radio" name="tipoGaceta" value="Extraordinaria" onChange={this.handleRadio.bind(this)}/>
+                                        <label htmlFor="Extraordinaria">Extraordinaria</label>
+                                    </div>
+                                    <div>
+                                        <input id="Alcance" type="radio" name="tipoGaceta" value="Alcance" onChange={this.handleRadio.bind(this)}/>
+                                        <label htmlFor="Alcance">Alcance</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="contenedor">
+                                <label className="label">Número de tomo</label>
+                                <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.tomo)} input`}/>
+                                { this.state.inputErrores.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras, espacios o empezar con cero.</div> : '' }
                             </div>
                         </div>
                     </div>
