@@ -172,7 +172,7 @@ class Alta extends Component {
                 break;
 
             case 'nombreEntrega':
-                inputErrores.entrega = (value.match(/^[A-Z][a-z]*[a-z]+$/)) ? false : true;
+                inputErrores.entrega = (value.match(/^[A-Z][a-z]*(\s[A-Z])*[a-z]+$/)) ? false : true;
                 break;
 
                 // Pruebas de patrones
@@ -267,24 +267,24 @@ class Alta extends Component {
 
         console.log(data)
 
-        // firebase.firestore()
-        //     .collection('gacetas')
-        //     .add(data)
-        //     .then(docRef => {
-        //         this.setState({ 
-        //             folio: this.state.folio + 1,
-        //             ultimoRegistro: data,
-        //             showAlert: true
-        //         })
-        //         this.limpiarInputs(event)
-        //     })
-        //     .catch(err => {
-        //         console.log('Error: ', err)
-        //     });
+        firebase.firestore()
+            .collection('gacetas')
+            .add(data)
+            .then(docRef => {
+                this.setState({ 
+                    folio: this.state.folio + 1,
+                    ultimoRegistro: data,
+                    showAlert: true
+                })
+                this.limpiarInputs(event)
+            })
+            .catch(err => {
+                console.log('Error: ', err)
+            });
 
-        // setTimeout(() => {
-        //     this.setState({ showAlert: false });
-        // }, 10000);
+        setTimeout(() => {
+            this.setState({ showAlert: false });
+        }, 10000);
     }
 
     render() {
