@@ -41,3 +41,13 @@
 .active { 
   border-bottom: 1px solid #000;
 }
+
+@media screen and (max-width: 600px) {
+  .menu-items {
+    display: none;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+}

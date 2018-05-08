@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import IconMenu from './Header/Hamburguer'
 
 class Home extends Component {
     constructor() {

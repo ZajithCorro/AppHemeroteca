@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import firebase from '../../firebase'
+import IconMenu from './Hamburguer'
 
 // Assets
 import './Header.css';
@@ -28,7 +29,9 @@ class Header extends Component {
                         <li className="menu-item"><NavLink exact to="/modificacion" className="menu-link">Modificación</NavLink></li>
                         <li className="menu-item"><Link to="/salir" className="menu-link">Salir</Link></li>
                     </ul>
-                    <img src="" alt="" className="menu-icon"/>
+                    <div className="menu-icon">
+                        <IconMenu />
+                    </div>
                 </nav>
              </header>
         ) 

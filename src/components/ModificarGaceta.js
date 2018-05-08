@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { NavLink } from 'react-router-dom';
-import firabase from '../firebase'
+import { NavLink, Redirect } from 'react-router-dom';
+import firebase from '../firebase'
 
 class Modificar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            gaceta: (this.props.location.state || ''),
-            id: this.props.match.params.id,
+            gaceta: '',
             tipoGaceta: '',
-            entregaGaceta: []
+            entregaGaceta: [],
+            inventario: '',
+            redirect: false
         }
         window.document.title = 'Hemeroteca | Modificar Gaceta'
+        this.handleClickGuardar = this.handleClickGuardar.bind(this)
     }
 
     componentWillMount() {
         if (this.props.location.state != undefined) {
-            this.setState({ gaceta: this.props.location.state.gaceta})
+            this.setState({ 
+                gaceta: this.props.location.state.gaceta,
+            })
         }
     }
 
@@ -40,10 +44,45 @@ class Modificar extends Component {
     handleChange(event) {
         let name = event.target.name;
         let value = event.target.value;
-        this.setState({ [name] : value })
+        let  { gaceta } = this.state;
+
+        gaceta.inventario = value
+        this.setState({ gaceta: gaceta })
+    }
+
+    handleClickGuardar() {
+        let data = {
+            folio : this.state.gaceta.folio,
+            numero : parseInt(this.state.gaceta.numero),
+            tomo : parseInt(this.state.gaceta.tomo) || null,
+            tipo : this.state.gaceta.tipo,
+            paginas : parseInt(this.state.gaceta.paginas),
+            fecha_ejemplar : this.state.gaceta.fecha_ejemplar,
+            fecha_recepcion: this.state.gaceta.fecha_recepcion,
+            ejemplares: this.state.gaceta.ejemplares,
+            nombre_entrega: this.state.gaceta.nombre_entrega,
+            inventario : parseInt(this.state.gaceta.inventario),
+            entregado: this.state.gaceta.entregado
+        }
+
+        firebase.firestore()
+            .collection('gacetas')
+            .doc(this.state.gaceta.key)
+            .set(data)
+            .then(respose => {
+                this.setState({redirect: true})
+            })
+            .catch(err => {
+                console.log('Error')
+            });
     }
 
     render() {
+        const { redirect } = this.state;
+        if (redirect) {
+            return <Redirect to='/modificacion'/>
+        }
+
         return(
             <div className="main">
                 { 
@@ -54,11 +93,11 @@ class Modificar extends Component {
                                 <div className="form">
                                     <div className="contenedor">
                                         <label className="label">Número de gaceta</label>
-                                        <input type="text" name="numeroGaceta" className="input" value={this.state.gaceta.numero} onChange={this.handleChange.bind(this)} disabled/>
+                                        <input type="text" name="numeroGaceta" className="input" value={this.state.gaceta.numero} disabled/>
                                     </div>
                                     <div className="contenedor">
                                         <label className="label">Número de tomo</label>
-                                        <input type="text" name="tomoGaceta" className="input" value={this.state.gaceta.tomo} onChange={this.handleChange.bind(this)} disabled/>
+                                        <input type="text" name="tomoGaceta" className="input" value={this.state.gaceta.tomo || ''} disabled/>
                                     </div>
                                     <div className="contenedor">
                                         <label className="label">Tipo</label>
@@ -79,11 +118,11 @@ class Modificar extends Component {
                                     </div>
                                     <div className="contenedor">
                                         <label className="label">Páginas</label>
-                                        <input type="text" name="paginas" className="input" value={this.state.gaceta.paginas} onChange={this.handleChange.bind(this)} disabled/>
+                                        <input type="text" name="paginas" className="input" value={this.state.gaceta.paginas} disabled/>
                                     </div>
                                     <div className="contenedor">
                                         <label className="label">Fecha del ejemplar</label>
-                                        <input type="date" name="dateEjemplar" className="input" value={this.state.gaceta.fecha_ejemplar} onChange={this.handleChange.bind(this)} disabled/>
+                                        <input type="date" name="dateEjemplar" className="input" value={this.state.gaceta.fecha_ejemplar} disabled/>
                                     </div>
                                     <div className="contenedor">
                                         <label className="label">Archivo digital</label>
@@ -139,9 +178,9 @@ class Modificar extends Component {
                             </div>
                             <div className="contenedor-btns">
                                 <NavLink
-                                    to = {{pathname: '/modificacion'}}
+                                    to = '/modificacion'
                                     className="btn"> Cancelar </NavLink>
-                                <button className="btn">Guardar registro</button>
+                                <button className="btn" onClick={this.handleClickGuardar}>Guardar registro</button>
                             </div>
                         </div>
                 }
