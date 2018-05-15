@@ -18,7 +18,6 @@ class Alta extends Component {
                 'Extraordinaria': false,
                 'Alcance': false
             },
-            upload: 0,
             paginas: '',
             dateEjemplar: '',
             dateRecepcion: '',
@@ -46,7 +45,8 @@ class Alta extends Component {
             },
             ultimoRegistro: [],
             validacionTotal : true,
-            showAlert: false
+            showAlert: false,
+            upload: 0
         });
 
         this.handleInput = this.handleInput.bind(this);
@@ -160,16 +160,13 @@ class Alta extends Component {
             case 'tipoGaceta':
                 inputErrores.tipo = (value) ? false : true;
 
-                if (value === 'Extraordinaria') {
-                    this.setState({ status: false })
-                }
-                
+                if (value === 'Extraordinaria') this.setState({ status: false })                
                 if (value === 'Alcance' || value === 'Ordinaria') {
                     this.setState({ 
                         status: true,
                         tomoGaceta: ''
                     })
-                    inputErrores.tomo = ''
+                    inputErrores.tomo = false
                 }
 
                 break;
