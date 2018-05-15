@@ -137,9 +137,7 @@ class Gaceta extends Component {
                                     }} className='btn'> Modificar
                                 </NavLink> : null }
 
-                        <NavLink 
-                            to={{ pathname : '' }} className="btn"> Ver
-                        </NavLink>
+                        <a href={gaceta.urlFile} target="_blank">Ver</a>
                     </CardOpc>
                 </Card>
             )

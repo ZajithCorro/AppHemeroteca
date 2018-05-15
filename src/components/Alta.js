@@ -18,6 +18,7 @@ class Alta extends Component {
                 'Extraordinaria': false,
                 'Alcance': false
             },
+            upload: 0,
             paginas: '',
             dateEjemplar: '',
             dateRecepcion: '',
@@ -88,6 +89,7 @@ class Alta extends Component {
         this.setState({ [name]: value }, () => { this.validarInput(name, value) });
     }
 
+    // Función que escucha los cambios en los Checkbox y los asigna al state correcto.
     handleCheckbox(event) {
         let name = event.target.name;
         let value = event.target.value;
@@ -97,6 +99,7 @@ class Alta extends Component {
         this.setState({ opcEntrega: opcEntrega} , () => { this.validarInput(name, value) })
     }
 
+    // Función que escucha los cambios en los Radios y los asigna al state correcto.
     handleRadio(event) {
         let name = event.target.name;
         let value = event.target.value;
@@ -111,6 +114,11 @@ class Alta extends Component {
         }
 
         this.setState({tipoGaceta: tipoGaceta} , () => { this.validarInput(name, value) })
+    }
+    
+    // Función que escucha los cambios en el input File y lo asigna al state correcto.
+    handleInputFile(event) { 
+        this.setState({ file: event.target.files[0]})
     }
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
@@ -251,7 +259,7 @@ class Alta extends Component {
 
     // Función que se activa al momento de hacer clic en el boton "Guardar Registro". Crea un nuevo registro en la BD.
     nuevoRegistro (event) {
-        let data = {
+        let newGaceta = {
             folio : this.state.folio,
             numero : parseInt(this.state.numeroGaceta),
             tomo : parseInt(this.state.tomoGaceta) || null,
@@ -259,32 +267,41 @@ class Alta extends Component {
             paginas : parseInt(this.state.paginas),
             fecha_ejemplar : this.state.dateEjemplar,
             fecha_recepcion: this.state.dateRecepcion,
-            ejemplares: this.state.ejemplares,
+            ejemplares: parseInt(this.state.ejemplares),
             nombre_entrega: this.state.nombreEntrega,
             inventario : parseInt(this.state.inventario),
             entregado: this.state.opcEntrega
         }
 
-        console.log(data)
-
-        firebase.firestore()
-            .collection('gacetas')
-            .add(data)
-            .then(docRef => {
-                this.setState({ 
-                    folio: this.state.folio + 1,
-                    ultimoRegistro: data,
-                    showAlert: true
+        const task = firebase.storage().ref(`archivosDigitales/${this.state.file.name}`).put(this.state.file)
+        task.on('state_changed', (snapshot) =>{
+                let percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                this.setState({
+                    upload: percent
                 })
-                this.limpiarInputs(event)
+            }, (error) =>{
+                this.setState({
+                    message: `Ha ocurrido un error: ${error.message}`
+                })
+            }, () =>{
+                newGaceta.urlFile = task.snapshot.downloadURL
+                firebase.firestore()
+                    .collection('gacetas')
+                    .add(newGaceta)
+                    .then(docRef => {
+                        // this.setState({ 
+                        //     folio: this.state.folio + 1,
+                        //     ultimoRegistro: data,
+                        //     showAlert: true
+                        // })
+                    })
+                    .catch(err => {
+                        console.log('Error: ', err)
+                    });
             })
-            .catch(err => {
-                console.log('Error: ', err)
-            });
-
-        setTimeout(() => {
-            this.setState({ showAlert: false });
-        }, 10000);
+        // setTimeout(() => {
+        //     this.setState({ showAlert: false });
+        // }, 10000);
     }
 
     render() {
@@ -311,7 +328,8 @@ class Alta extends Component {
                             </div>
                             <div className="contenedor">
                                 <label className="label">Archivo digital</label>
-                                <input type="text" className="input"/>
+                                <input type="file" className="input" accept="application/pdf" onChange={this.handleInputFile.bind(this)}/>
+                                { this.state.upload }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Tipo</label>

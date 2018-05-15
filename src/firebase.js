@@ -6,7 +6,7 @@ const config = {
   authDomain: 'apphemeroteca.firebaseapp.com',
   databaseURL: 'https://apphemeroteca.firebaseio.com',
   projectId: 'apphemeroteca',
-  storageBucket: '',
+  storageBucket: 'apphemeroteca.appspot.com',
   messagingSenderId: '400788218260'
 }
 
