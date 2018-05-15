@@ -41,7 +41,8 @@ class Alta extends Component {
                 ejemplares: '',
                 entrega: '',
                 inventario: '',
-                personaEntrega: ''
+                personaEntrega: '',
+                file: ''
             },
             ultimoRegistro: [],
             validacionTotal : true,
@@ -78,7 +79,7 @@ class Alta extends Component {
         for (let i in this.state.inputErrores) {
             if (this.state.inputErrores[i] === false) a++;
         }
-        (a === 10) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
+        (a === 11) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
     }
 
     // Función que escucha los cambios en los inputs y los asigna al state correcto.
@@ -118,7 +119,14 @@ class Alta extends Component {
     
     // Función que escucha los cambios en el input File y lo asigna al state correcto.
     handleInputFile(event) { 
-        this.setState({ file: event.target.files[0]})
+        let file = event.target.files[0]
+        let { inputErrores } = this.state
+
+        inputErrores.file = (file) ? false : true
+
+        this.setState({ file: file, inputErrores: inputErrores})
+
+
     }
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
@@ -160,15 +168,15 @@ class Alta extends Component {
             case 'tipoGaceta':
                 inputErrores.tipo = (value) ? false : true;
 
-                if (value === 'Extraordinaria') this.setState({ status: false })                
+                if (value === 'Extraordinaria') this.setState({ status: false })
+
                 if (value === 'Alcance' || value === 'Ordinaria') {
                     this.setState({ 
                         status: true,
                         tomoGaceta: ''
                     })
-                    inputErrores.tomo = false
                 }
-
+                inputErrores.tomo = false
                 break;
 
             case 'dateRecepcion':
