@@ -123,8 +123,9 @@ class Alta extends Component {
 
     // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
     validarInput (name, value) {
-        const { inputErrores }  = this.state;
-        const { opcEntrega } = this.state;
+        const { inputErrores }  = this.state
+        const { opcEntrega } = this.state
+        const { tipoGaceta } = this.state
         let count = 0;
 
         switch (name) {
@@ -134,6 +135,7 @@ class Alta extends Component {
 
             case 'tomoGaceta':
                 inputErrores.tomo = (value.match(/^[1-9]+\d*$/)) ? false : true;
+                if (!value) inputErrores.tomo = false;
                 break;
 
             case 'paginas':
@@ -141,14 +143,14 @@ class Alta extends Component {
                 break;
 
             case 'dateEjemplar':
-                inputErrores.fecha = (value) ? false : true;
+                inputErrores.fecha = (value) ? false : true
 
                 if (!value && this.state.dateRecepcion) {
                     inputErrores.recepcion = true
                 }
 
                 if (value && this.state.dateRecepcion) {
-                    let dateEjem = new Date(value);
+                    let dateEjem = new Date(value)
                     let dateRecep = new Date(this.state.dateRecepcion)
 
                     inputErrores.recepcion = (dateRecep >= dateEjem) ? false : true
@@ -159,11 +161,15 @@ class Alta extends Component {
                 inputErrores.tipo = (value) ? false : true;
 
                 if (value === 'Extraordinaria') {
-                    inputErrores.tomo = false
-                } else {
-                    if (!this.state.tomoGaceta) {
-                        inputErrores.tomo = true;
-                    }
+                    this.setState({ status: false })
+                }
+                
+                if (value === 'Alcance' || value === 'Ordinaria') {
+                    this.setState({ 
+                        status: true,
+                        tomoGaceta: ''
+                    })
+                    inputErrores.tomo = ''
                 }
 
                 break;
@@ -299,6 +305,7 @@ class Alta extends Component {
                         console.log('Error: ', err)
                     });
             })
+
         // setTimeout(() => {
         //     this.setState({ showAlert: false });
         // }, 10000);
@@ -350,7 +357,7 @@ class Alta extends Component {
                             </div>
                             <div className="contenedor">
                                 <label className="label">Número de tomo</label>
-                                <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.tomo)} input`}/>
+                                <input type="text" name="tomoGaceta" value={this.state.tomoGaceta} onChange={this.handleInput} className={`${this.claseError(this.state.inputErrores.tomo)} input`} disabled={this.state.status}/>
                                 { this.state.inputErrores.tomo ? <div className="error">El campo debe de estar lleno y no debe contener letras, espacios o empezar con cero.</div> : '' }
                             </div>
                         </div>
