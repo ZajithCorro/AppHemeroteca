@@ -2,7 +2,7 @@
 
 *, ::after, ::before {
   box-sizing: border-box;
-  font-family: Lato, "Helevetica";
+  font-family: 'Roboto', "Helevetica";
   font-size: 1rem;
   margin: 0;
   padding: 0;

@@ -1,11 +1,9 @@
-// Dependencies
 import React, { Component } from 'react';
-import firebase from '../firebase.js';
+import firebase from '../../firebase.js';
 
-// Components
-import Gaceta from './GacetaCard'
+import Gaceta from '.../Table'
 
-class Consulta extends Component {
+class Modificacion extends Component {
     constructor(){
         super();
         this.state = {
@@ -26,8 +24,6 @@ class Consulta extends Component {
         this.handleInput = this.handleInput.bind(this)
         this.handleClickBuscar = this.handleClickBuscar.bind(this)
         this.handleClickLimpiar = this.handleClickLimpiar.bind(this)
-
-        window.document.title = 'Hemeroteca | Consulta'
     }
 
     createQuery(data) {
@@ -56,14 +52,12 @@ class Consulta extends Component {
         return aux;
     }
 
-    // Función que escucha los cambios en los inputs y los asigna al state correcto.
     handleInput (e) {
         let name = e.target.name;
         let value = e.target.value;
         this.setState({ [name]: value }, () => { this.validarInput(name, value) });
     }
 
-    // Función que se activa al momento de hacer clic en el boton "Consultar". Seleccióna el campo con mayor prioridad y realiza un búsqueda.
     handleClickBuscar () {
         let docs = [];
         let temp = {}
@@ -75,7 +69,6 @@ class Consulta extends Component {
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-                    console.log(doc.data())
                     temp = doc.data()
                     temp.key = doc.id
                     docs.push(temp);
@@ -98,7 +91,6 @@ class Consulta extends Component {
             });
     }
     
-    // Función que se activa al presionar el botón "Limpiar"
     handleClickLimpiar () {
         this.setState({
             gaceta: '',
@@ -115,7 +107,6 @@ class Consulta extends Component {
         })
     }
 
-    // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
     validarInput (name, val) {
         const { errores } = this.state;
 
@@ -140,7 +131,6 @@ class Consulta extends Component {
         this.activarBtn();
     }
 
-    // Función que activa el botón "Consultar" en caso de que el formulario este llenado correctamente.
     activarBtn () {
         let a = 0;
         for (let i in this.state.errores) {
@@ -155,7 +145,7 @@ class Consulta extends Component {
         return(
             <div className="main">
                 <div className="contenedor">
-                    <h1 className="contenedor-titulo">Datos de consulta</h1>
+                    <h1 className="contenedor-titulo">Datos de consulta para modificación</h1>
                     <div className="form">
                         <div className="contenedor">
                             <label className="label">Número de gaceta</label>
@@ -193,11 +183,11 @@ class Consulta extends Component {
                     </div>
                 </div>
                 
-                { (this.state.gacetas.length) ? <Gaceta valor={this.state.gacetas} modificar={false}/> : null}
+                { (this.state.gacetas.length) ? <Gaceta valor={this.state.gacetas} modificar={true}/> : null}
                 { (this.state.errorMessage) ? <div>No se encontraron coincidencias. Pruebe con otros datos. </div> : null}
             </div>
         );
     }
 }
 
-export default Consulta
+export default Modificacion

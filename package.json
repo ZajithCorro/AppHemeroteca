@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server -d --colors --progress",
+    "dev": "webpack-dev-server -d --progress --open 'FirefoxDeveloperEdition'",
     "build": "webpack -p"
   },
   "author": "",

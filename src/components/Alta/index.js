@@ -1,9 +1,7 @@
-// Dependencies
 import React, { Component } from 'react';
-import firebase from '../firebase.js';
+import firebase from '../../firebase.js';
 
-// Components
-import AlertRegistro from './AlertRegistro'
+import AlertRegistro from '../AlertRegistro'
 
 class Alta extends Component {
     constructor(){
@@ -53,10 +51,8 @@ class Alta extends Component {
         this.handleInput = this.handleInput.bind(this);
         this.limpiarInputs = this.limpiarInputs.bind(this);
         this.nuevoRegistro = this.nuevoRegistro.bind(this);
-        window.document.title = 'Hemeroteca | Alta'
     }
 
-    // Función que se activa al momento que el componente es renderizado.
     componentWillMount () {
         firebase.firestore()
             .collection('gacetas')
@@ -73,7 +69,6 @@ class Alta extends Component {
             });
     }
 
-    // Función que activa el botón "Guardar Registro" en caso de que el formulario este llenado correctamente.
     activarBoton () {
         let a = 0;
         for (let i in this.state.inputErrores) {
@@ -82,7 +77,6 @@ class Alta extends Component {
         (a === 11) ? this.setState({ validacionTotal : false }) : this.setState({ validacionTotal : true }) 
     }
 
-    // Función que escucha los cambios en los inputs y los asigna al state correcto.
     handleInput (event) {
         let name = event.target.name;
         let value = event.target.value;
@@ -90,7 +84,6 @@ class Alta extends Component {
         this.setState({ [name]: value }, () => { this.validarInput(name, value) });
     }
 
-    // Función que escucha los cambios en los Checkbox y los asigna al state correcto.
     handleCheckbox(event) {
         let name = event.target.name;
         let value = event.target.value;
@@ -100,7 +93,6 @@ class Alta extends Component {
         this.setState({ opcEntrega: opcEntrega} , () => { this.validarInput(name, value) })
     }
 
-    // Función que escucha los cambios en los Radios y los asigna al state correcto.
     handleRadio(event) {
         let name = event.target.name;
         let value = event.target.value;
@@ -117,7 +109,6 @@ class Alta extends Component {
         this.setState({tipoGaceta: tipoGaceta} , () => { this.validarInput(name, value) })
     }
     
-    // Función que escucha los cambios en el input File y lo asigna al state correcto.
     handleInputFile(event) { 
         let file = event.target.files[0]
         let { inputErrores } = this.state
@@ -129,7 +120,6 @@ class Alta extends Component {
 
     }
 
-    // Función que valida el contenido de cada input y asigna en el "State" si existe o no error en los campos.
     validarInput (name, value) {
         const { inputErrores }  = this.state
         const { opcEntrega } = this.state
@@ -152,6 +142,11 @@ class Alta extends Component {
 
             case 'dateEjemplar':
                 inputErrores.fecha = (value) ? false : true
+
+                let dateNow = new Date()
+                let dateVal = new Date(value)
+
+                console.log(dateNow > dateVal)
 
                 if (!value && this.state.dateRecepcion) {
                     inputErrores.recepcion = true
@@ -194,10 +189,6 @@ class Alta extends Component {
                 inputErrores.entrega = (value.match(/^[A-Z][a-z]*(\s[A-Z])*[a-z]+$/)) ? false : true;
                 break;
 
-                // Pruebas de patrones
-                // ([A-Z][a-z]+[\s]*)+
-                // (^[A-Z][a-z]+)(\s)*([A-Z]*[a-z]+$)*
-
             case 'inventario':
                 inputErrores.inventario = (value.match(/^[1-9]+\d*$/)) ? false : true;
                 break;
@@ -206,7 +197,6 @@ class Alta extends Component {
                 for (let i in opcEntrega) {
                     if (opcEntrega[i] === true) count++
                 }
-
                 inputErrores.personaEntrega = (count != 0) ? false : true;
                 break;
 
@@ -218,7 +208,6 @@ class Alta extends Component {
         this.activarBoton();
     }
 
-    // Función que recibe el "State" de cada input y asigna una clase error a los input que tengan un contenido incorrecto o estén vacios.
     claseError (state) {
         if (state === true) {
             return 'inputInvalido'
@@ -227,7 +216,6 @@ class Alta extends Component {
         }
     }
 
-    // Función que se activa al hacer clic en el botón "Limpiar". Limpia el contenido del los input por medio del "State".
     limpiarInputs (event) {
         this.setState({
             folio: '',
@@ -268,7 +256,6 @@ class Alta extends Component {
         window.document.getElementById('Suscripciones').checked = false;
     }
 
-    // Función que se activa al momento de hacer clic en el boton "Guardar Registro". Crea un nuevo registro en la BD.
     nuevoRegistro (event) {
         let newGaceta = {
             folio : this.state.folio,
@@ -286,25 +273,20 @@ class Alta extends Component {
 
         const task = firebase.storage().ref(`archivosDigitales/${this.state.file.name}`).put(this.state.file)
         task.on('state_changed', (snapshot) =>{
-                let percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                this.setState({
-                    upload: percent
-                })
+
             }, (error) =>{
-                this.setState({
-                    message: `Ha ocurrido un error: ${error.message}`
-                })
+                console.error(error.message)
             }, () =>{
                 newGaceta.urlFile = task.snapshot.downloadURL
                 firebase.firestore()
                     .collection('gacetas')
                     .add(newGaceta)
                     .then(docRef => {
-                        // this.setState({ 
-                        //     folio: this.state.folio + 1,
-                        //     ultimoRegistro: data,
-                        //     showAlert: true
-                        // })
+                        this.setState({ 
+                            folio: this.state.folio + 1,
+                            ultimoRegistro: data,
+                            showAlert: true
+                        })
                     })
                     .catch(err => {
                         console.log('Error: ', err)
@@ -341,7 +323,6 @@ class Alta extends Component {
                             <div className="contenedor">
                                 <label className="label">Archivo digital</label>
                                 <input type="file" className="input" accept="application/pdf" onChange={this.handleInputFile.bind(this)}/>
-                                { this.state.upload }
                             </div>
                             <div className="contenedor">
                                 <label className="label">Tipo</label>
