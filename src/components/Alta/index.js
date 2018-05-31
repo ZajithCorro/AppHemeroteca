@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import firebase from '../../firebase.js';
 
-import AlertRegistro from '../AlertRegistro'
+import AlertRegistro from '../Alert'
+import { Wrapper, Title } from './styles'
 
 class Alta extends Component {
     constructor(){
@@ -303,7 +304,7 @@ class Alta extends Component {
             <div className="main">
                 <div>
                     <div className="contenedor">
-                        <h1 className="contenedor-titulo">Datos de gaceta</h1>
+                        <Title>Datos de gaceta</Title>
                         <div className="form">
                             <div className="contenedor">
                                 <label className="label">Número de gaceta</label>

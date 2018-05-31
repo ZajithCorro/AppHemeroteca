@@ -10,6 +10,7 @@ import Consulta from '../Consulta'
 import Salir from '../Salir'
 import Home from '../Home'
 import Login from '../Login';
+import { Wrapper } from './styles';
 
 class App extends Component {
     constructor(){
@@ -39,7 +40,7 @@ class App extends Component {
                 <Router>
                 {
                     this.state.user ?     
-                            <div>  
+                            <Wrapper>  
                                 <Header />
                                 <Switch>
                                     <Route exact path="/" component={Home}/>
@@ -50,7 +51,7 @@ class App extends Component {
                                     {/* <Route exact path="/modificacion/:id" component={ModificarGaceta}/> */}
                                     <Redirect to="/"/>
                                 </Switch>
-                            </div> : 
+                            </Wrapper> : 
                             <Switch>
                                 <Route path="/login" component={Login} />
                                 <Redirect to="/login"/>
