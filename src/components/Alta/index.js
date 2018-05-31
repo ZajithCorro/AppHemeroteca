@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import firebase from '../../firebase.js';
 
-import AlertRegistro from '../AlertRegistro'
+import AlertRegistro from '../Alert'
 
 class Alta extends Component {
     constructor(){
