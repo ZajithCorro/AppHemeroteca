@@ -39,9 +39,10 @@ class App extends Component {
             <div>
                 <Router>
                 {
-                    this.state.user ?     
+                    ( this.state.user ) ?
+                        <div>
+                            <Header />
                             <Wrapper>  
-                                <Header />
                                 <Switch>
                                     <Route exact path="/" component={Home}/>
                                     <Route path="/alta" component={Alta}/>
@@ -51,11 +52,12 @@ class App extends Component {
                                     {/* <Route exact path="/modificacion/:id" component={ModificarGaceta}/> */}
                                     <Redirect to="/"/>
                                 </Switch>
-                            </Wrapper> : 
-                            <Switch>
-                                <Route path="/login" component={Login} />
-                                <Redirect to="/login"/>
-                            </Switch>
+                            </Wrapper>
+                        </div> :
+                        <Switch>
+                            <Route path="/login" component={Login} />
+                            <Redirect to="/login"/>
+                        </Switch>
                 }
                 </Router>
             </div>
