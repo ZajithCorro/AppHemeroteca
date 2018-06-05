@@ -2,10 +2,16 @@ import React, { Component } from 'react'
 import Table from '../Table'
 import firebase from '../../firebase'
 
+import Modal from '../Modal'
+
 class Home extends Component {
     constructor() {
         super();
         this.state = { gacetas: null }
+    }
+
+    hide() {
+
     }
 
     componentDidMount() {
@@ -29,14 +35,7 @@ class Home extends Component {
     render() {
         return(
             <div className="main">
-                {
-                    (this.state.gacetas) ?
-                        <Table 
-                            data={ this.state.gacetas }
-                            seeModal={ null }
-                        />
-                    : null
-                }
+                {/* <Modal hideModal = {this.hide.bind(this)}/> */}
             </div>
         );
     }

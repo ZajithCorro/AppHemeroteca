@@ -3,6 +3,7 @@ import firebase from '../../firebase.js';
 
 import Table from '../Table'
 import Modal from '../Modal'
+import { Button } from '../Modal/styles'
 
 class Consulta extends Component {
     constructor(props){
@@ -18,7 +19,8 @@ class Consulta extends Component {
                 dateRecepcion: ''
             },
             validacionForm: true,
-            modal: false
+            modal: false,
+            gacetas: []
         };
 
         this.handleInput = this.handleInput.bind(this)
@@ -52,6 +54,29 @@ class Consulta extends Component {
         return aux;
     }
 
+    mensajeError(opc, data) {
+        let message
+
+        switch (opc) {
+            case 'gaceta':
+                message = `No se encontrarón resultados para la gaceta: ${data}`
+                break;
+            
+            case 'dateEjemplar':
+                message = `No se encontrarón resultados para fecha de ejemplar: ${data}`
+                break;
+            
+            case 'dateRecepcion':
+                message = `No se encontrarón resultados para fecha de recepción: ${data}`
+                break;
+
+            default:
+                break;
+        }
+
+        return message;
+    }
+
     handleInput (e) {
         let name = e.target.name;
         let value = e.target.value;
@@ -61,6 +86,7 @@ class Consulta extends Component {
     handleClickBuscar () {
         let docs = [];
         let temp = {}
+        let error;
         let attr = this.createQuery(this.state.opcSelect);
 
         firebase.firestore()
@@ -68,12 +94,14 @@ class Consulta extends Component {
             .where(attr.query, '==' , attr.value)
             .get()
             .then(snapshot => {
+                if (snapshot.docChanges.length == 0) error = this.mensajeError(this.state.opcSelect, attr.value);
+
                 snapshot.forEach(doc => {
                     temp = doc.data()
                     temp.key = doc.id
                     docs.push(temp);
                 })
-                this.setState({ gacetas: docs })
+                this.setState({ gacetas: docs, error: error })
             })
             .catch(err => {
                 console.error('Error: ', err)
@@ -158,19 +186,20 @@ class Consulta extends Component {
                         </div>
                     </div>
                     <div className="contenedor-btns">
-                        <button className="btn" onClick={this.handleClickBuscar} disabled={this.state.validacionForm}>Consultar</button>
+                        <Button primary onClick={this.handleClickBuscar} disabled={this.state.validacionForm}>Buscar</Button>
                     </div>
                 </div>
 
                 <Table 
                     data={ this.state.gacetas } 
                     seeModal={ this.newModal.bind(this) }
+                    error={ this.state.error }
                 />
 
                 { (this.state.modal) ? 
                     <Modal 
-                        hideModal={this.newModal.bind(this)} 
-                        data={this.state.editGaceta}
+                        hideModal={ this.newModal.bind(this) } 
+                        data={ this.state.editGaceta }
                     /> : 
                     null }
             </div>

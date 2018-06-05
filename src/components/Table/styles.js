@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Wrapper = styled.table`
     background-color: #fff;
     border-collapse: collapse;
-    border-radius: 10px;
+    border-radius: 5px;
     margin: 0 auto;
     overflow: hidden;
     text-align: left;
@@ -26,14 +26,34 @@ export const Tbody = styled.tbody`
 `
 
 export const Tr = styled.tr`
-    background-color: #DFE0E0;
+    background-color: rgba(223, 224, 224, .4);
 
     &:hover {
-        background-color: #FFF;
+        background-color: rgba(223, 224, 224);
         cursor: pointer;
     }
 `
 
 export const Td = styled.td`
     padding: .7em 1em;
+`
+
+export const Error = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    padding: 15px;
+    width: 25%;
+    text-align: center;
+
+    & > span {
+        font-size: 1.4em;
+    }
+`
+
+export const Img = styled.img`
+    width: 150px;
+    margin-bottom: 20px;
 `
