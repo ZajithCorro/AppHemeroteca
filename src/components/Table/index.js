@@ -25,11 +25,11 @@ const Table = ({ data, seeModal, error }) => (
                         onClick={ () => seeModal(gaceta) }
                     >
                         <Td># { gaceta.numero }</Td>
-                        <Td>Value</Td>
-                        <Td>{ gaceta.fecha_ejemplar }</Td>
+                        <Td> - </Td>
                         <Td>{ gaceta.paginas }</Td>
                         <Td>{ gaceta.ejemplares }</Td>
                         <Td>{ gaceta.inventario }</Td>
+                        <Td>{ gaceta.fecha_ejemplar }</Td>
                     </Tr>
                 ))}
             </Tbody>

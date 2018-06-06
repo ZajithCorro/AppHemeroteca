@@ -3,28 +3,26 @@ import PropTypes from 'prop-types'
 
 import { Wrapper, Row, Label, Input, Select } from './styles';
 
-const Baja = ({ change }) => (
+const Baja = ({ change, form }) => (
     <Wrapper>
         <Row>
             <Label>Razón:</Label>
-            <select onChange={change}>
+            <Select onChange={change} name="razon" value={form.razon}>
                 <option value="0">Elige una opción</option>
-                <option value="A">1</option>
-                <option value="C">2</option>
-                <option value="D">3</option>
-                <option value="E">4</option>
-                <option value="F">5</option>
-            </select>
+                <option value="Cliente">Pedido por Cliente</option>
+                <option value="Director">Pedido por Director</option>
+                <option value="Modulo">Pedido por Módulo de Gaceta Oficial</option>
+            </Select>
         </Row>
 
         <Row>
             <Label>Nombre entrega:</Label>
-            <Input type="text" name="nombre_entrega" onChange={change}/>
+            <Input type="text" name="nombre_entrega" onChange={change} value={form.nombre_entrega}/>
         </Row>
 
         <Row>
             <Label>Número referencia:</Label>
-            <Input type="text" nombre="numero_referencia" onChange={change}/>
+            <Input type="text" name="numero_referencia" onChange={change} value={form.numero_referencia}/>
         </Row>
     </Wrapper>
 )

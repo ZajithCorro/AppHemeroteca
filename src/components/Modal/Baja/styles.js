@@ -24,4 +24,6 @@ export const Input = styled.input`
     padding: .375rem .75rem;
 `
 
-export const Select = Input.extend``
+export const Select = styled.select`
+    padding: 2px 0;
+`

@@ -38,7 +38,7 @@ export const Content = styled.div`
 export const Title = styled.div`
     align-self: center;
     color: black;
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
     text-align: center;
 `
@@ -96,6 +96,23 @@ export const Button = styled.button`
     `}
 `
 
+export const Link = styled.a`
+    background-color: #FFF;
+    border-radius: .25rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    padding: .5rem 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #000;
+    color: #000;
+
+    &:hover {
+        background-color: #000;
+        color: #FFF;
+    }
+`
+
 export const Circle = styled.button`
     background-color: #FFF;
     border-radius: 12px;
@@ -109,5 +126,11 @@ export const Circle = styled.button`
             color: #FFF;
         }
 
+`
+
+export const Message = styled.p`
+    font-style: italic;
+    text-align: center;
+    font-size: 1.4em;
 `
 

@@ -1,14 +1,22 @@
 import React, { Component } from 'react'
-import { Wrapper, Label, Row } from './styles' 
+import PropTypes from 'prop-types'
 
-const Alta = () => (
+import { Wrapper, Label, Row, Select } from './styles' 
+
+const Alta = ({ change, form }) => (
     <Row>
         <Label>Razón:</Label>
-        <select>
+        <Select onChange={change} name="razon" value={form.razon}>
             <option defaultValue>Elige una opción</option>
-            <option>1</option>
-        </select>
+            <option value="compltar">Completar un pedido</option>
+            <option value="salidas">Futuras salidas</option>
+        </Select>
     </Row>
 )
+
+Alta.propTypes = {
+    change: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired
+}
 
 export default Alta;
