@@ -284,18 +284,15 @@ class Alta extends Component {
                     .then(docRef => {
                         this.setState({ 
                             folio: this.state.folio + 1,
-                            ultimoRegistro: data,
-                            showAlert: true
+                            ultimoRegistro: data
                         })
                     })
                     .catch(err => {
                         console.log('Error: ', err)
                     });
             })
-
-        // setTimeout(() => {
-        //     this.setState({ showAlert: false });
-        // }, 10000);
+        
+        this.limpiarInputs()
     }
 
     render() {

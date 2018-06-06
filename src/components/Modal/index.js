@@ -68,6 +68,7 @@ class Modal extends Component {
             .doc(this.props.data.key)
             .update({ inventario: this.state.inventario })
             .then(docRef => {
+                this.props.hideModal()
             })
             .catch(err => {
                 console.log(err)
